@@ -1,0 +1,8 @@
+Flask
+Gunicorn
+geopandas
+requests
+geojson
+pyproj
+pandas
+OWSLib

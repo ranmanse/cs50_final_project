@@ -1,0 +1,18 @@
+#map { 
+  height: 400px; 
+  width: 50%;
+  margin-bottom: 20px;
+}
+
+img {
+  max-height: 200px; 
+  margin: 3px; 
+  border: 1px solid #ddd;
+}
+
+/* Specific styling for map tiles */
+/* Copilot */
+.leaflet-tile {
+  border: none !important;
+  max-height: none !important;
+}
