@@ -85,6 +85,8 @@
 
 			var url =`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=aef635a622e9a3e2d5e2c519481331dd&lat=${lat}&lon=${lng}&radius=0.2&max_taken_date=1995-01-01&tag=mauer,wall&format=json&nojsoncallback=1`
 			
+			//console.log(url);
+
 			$.getJSON(url, function(data){
 				//console.log(JSON.stringify(data));
 				
@@ -103,33 +105,7 @@
 
 			}
 			
-
-			/*
-			var settings = {
-				"async": true,
-				"crossDomain": true,
-				"url": `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=aef635a622e9a3e2d5e2c519481331dd&lat=${lat}&lon=${lng}&radius=0.2&max_taken_date=1995-01-01&tag=mauer, wall&format=json&nojsoncallback=1`,
-				"method": "GET",
-				"headers": {}
-			};
-
-			$.ajax(settings).done(function (data) {
-				console.log(data);
-				
-				$("#galleryTitle").empty().append(data.photos.photo[0].title + " Gallery");
-				$("#flickr").empty();
-				$.each(data.photos.photo, function (i, gp) {
-					var farmId = gp.farm;
-					var serverId = gp.server;
-					var id = gp.id;
-					var secret = gp.secret;
-
-					console.log(farmId + ", " + serverId + ", " + id + ", " + secret);
-
-					$("#flickr").append('<img src="https://farm' + farmId + '.staticflickr.com/' + serverId + '/' + id + '_' + secret + '.jpg"/>');
-					
-				}); 
-			}*/);
+);
 		}
 
 	

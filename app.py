@@ -1,12 +1,13 @@
 import os
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, json, render_template, request, jsonify
 import geopandas as gpd
 from requests import Request
 import geojson
 from pyproj import CRS
 import pandas as pd
 from owslib.wfs import WebFeatureService
+import requests
 
 app = Flask(__name__)
 
@@ -37,6 +38,19 @@ def index():
         data_json = data.to_json(to_wgs84=True)
         
         #print(data_json)
+
+        # Get data from Flickr API
+        api_url = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=aef635a622e9a3e2d5e2c519481331dd&lat=52.48531528648545&lon=13.458874225616457&radius=0.2&max_taken_date=1995-01-01&tag=mauer,wall&format=json&nojsoncallback=1"
+
+        response = requests.get(api_url).json()
+        # Acces response as dictionary - From Co-Pilot: https://www.copilotsearch.com/posts/how-to-use-the-flickr-api 
+        photos = response['photos']['photo']
+
+        #print(photos)
+
+        # Save API-request to json file
+        with open('static/data/flickr_api.json', 'w') as f:
+            json.dump(photos, f)
 
 
         return render_template('index.html', geometry = data_json)
