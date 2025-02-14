@@ -40,18 +40,51 @@ def index():
         #print(data_json)
 
         # Get data from Flickr API
-        api_url = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=aef635a622e9a3e2d5e2c519481331dd&lat=52.48531528648545&lon=13.458874225616457&radius=0.2&max_taken_date=1995-01-01&tag=mauer,wall&format=json&nojsoncallback=1"
+        #api_url = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=aef635a622e9a3e2d5e2c519481331dd&lat=52.48531528648545&lon=13.458874225616457&radius=0.2&max_taken_date=1995-01-01&tag=mauer,wall&format=json&nojsoncallback=1"
+        url = "https://api.flickr.com/services/rest/" #?method=flickr.photos.search&api_key=aef635a622e9a3e2d5e2c519481331dd&lat=52.48531528648545&lon=13.458874225616457&radius=0.2&max_taken_date=1995-01-01&tag=mauer,wall&format=json&nojsoncallback=1"
+        
+        def api_request_per_page(page):
+            response = requests.get(url, 
+                params = {
+                    "method": "flickr.photos.search",
+                    "api_key": "aef635a622e9a3e2d5e2c519481331dd",
+                    #"lat": 52.48531528648545,
+                    #"lon": 13.458874225616457,
+                    "bbox": "13.077850,52.374342,13.564682,52.685956",
+                    #"radius": 0.2,
+                    "accuracy": 11,
+                    #"max_taken_date": "1995-01-01",
+                    "tag": "mauer,wall",
+                    "page": page,
+                    "per_page" : 500,
+                    "format": "json",
+                    "nojsoncallback": 1,
+                    "extras": "geo"
 
-        response = requests.get(api_url).json()
+                }).json()
+            return response
+        
         # Acces response as dictionary - From Co-Pilot: https://www.copilotsearch.com/posts/how-to-use-the-flickr-api 
-        photos = response['photos']['photo']
+        photos = api_request_per_page(1)['photos']['photo']
 
-        #print(photos)
+        pages = api_request_per_page(1)['photos']['pages']
+        print('pages: ', pages)
+        # Loop through all pages and append to photos (Autocomplete: https://www.copilotsearch.com/posts/how-to-use-the-flickr-api)
+        for page in range(2, pages):
+            print("append page", page)
+            photos += api_request_per_page(page)['photos']['photo']
 
-        # Save API-request to json file
-        with open('static/data/flickr_api.json', 'w') as f:
-            json.dump(photos, f)
+        gdf = gpd.GeoDataFrame(photos)
+        # Convert latitude and longitude to geoemtry (https://geopandas.org/docs/user_guide/geocoding.html)
+        gdf.set_geometry(gpd.points_from_xy(gdf.longitude, gdf.latitude), inplace=True)
 
+
+        #print(gdf.head)
+
+        # Append API-request to json file
+        with open('static/data/flickr_api.geojson', 'w') as f:
+            #json.dump(photos, f)
+            geojson.dump(gdf, f)
 
         return render_template('index.html', geometry = data_json)
     
