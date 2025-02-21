@@ -48,12 +48,12 @@ def index():
                 params = {
                     "method": "flickr.photos.search",
                     "api_key": "aef635a622e9a3e2d5e2c519481331dd",
-                    #"lat": 52.48531528648545,
-                    #"lon": 13.458874225616457,
-                    "bbox": "13.077850,52.374342,13.564682,52.685956",
-                    #"radius": 0.2,
+                    "lon": 13.45928192138672,
+                    "lat": 52.485498223625996,
+                    #"bbox": "13.077850,52.374342,13.564682,52.685956",
+                    "radius": 5,
                     "accuracy": 11,
-                    #"max_taken_date": "1995-01-01",
+                    "max_taken_date": "1995-01-01",
                     "tag": "mauer,wall",
                     "page": page,
                     "per_page" : 500,
@@ -68,8 +68,10 @@ def index():
         photos = api_request_per_page(1)['photos']['photo']
 
         pages = api_request_per_page(1)['photos']['pages']
-        print('pages: ', pages)
+        #print('pages: ', pages)
         # Loop through all pages and append to photos (Autocomplete: https://www.copilotsearch.com/posts/how-to-use-the-flickr-api)
+       
+        
         for page in range(2, pages):
             print("append page", page)
             photos += api_request_per_page(page)['photos']['photo']
@@ -85,7 +87,7 @@ def index():
         with open('static/data/flickr_api.geojson', 'w') as f:
             #json.dump(photos, f)
             geojson.dump(gdf, f)
-
+        
         return render_template('index.html', geometry = data_json)
     
 
