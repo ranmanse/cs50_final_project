@@ -29,7 +29,7 @@
 	{% block scripts %}
 	<script>
 		// 1 Map initialization
-		var map = L.map('map').setView([52.518611, 13.408333], 10);
+		var map = L.map('map').setView([52.486753, 13.488722], 13);
 
 		// 2a) Add backggroud map: Luftbilder 1989
 		var luftbilder1989 = L.tileLayer.wms('https://gdi.berlin.de/services/wms/berlinermauer?', {
@@ -74,9 +74,9 @@
 			}
 		}).addTo(map);
 
+		
 
-
-		var start_point = turf.point([13.408333, 52.518611]);
+		var start_point = turf.point([13.488722, 52.486753]);
 			var polygon = turf.buffer(start_point, 0.2);
 			L.geoJSON(polygon, {draggable: 'true'}).addTo(map);
 
@@ -84,7 +84,7 @@
 			//https://www.sitepoint.com/jquery-read-text-file/
 			jQuery.get('/static/data/flickr_api.geojson', function (data) {
 				//too much to disply
-				//L.geoJSON(data).addTo(map);	
+				L.geoJSON(data).addTo(map);	
 				flickr_data = data;
 			});	
 			
@@ -115,6 +115,8 @@
 			L.geoJSON(ptsWithin).addTo(map);
 			//console.log(ptsWithin.features.length);
 			
+		
+
 			//console.log(ptsWithin.length);	
 			// loop syntax from co-pilot
 			for (let i = 0; i < ptsWithin.features.length; i++) {
@@ -127,7 +129,6 @@
 					//Concat von Copilot
 					const myImage = new Image();
 					myImage.src = `https://live.staticflickr.com/${props.server}/${props.id}_${props.secret}_c.jpg`;
-				
 					document.body.appendChild(myImage);
 				
 
@@ -159,6 +160,9 @@
 );*/
 		} 
 
+
+
+		
 
 
 		map.on('mouseup', onDrag);
