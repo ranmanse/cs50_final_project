@@ -75,48 +75,66 @@
 		}).addTo(map);
 
 
+
+		var start_point = turf.point([13.408333, 52.518611]);
+			var polygon = turf.buffer(start_point, 0.2);
+			L.geoJSON(polygon, {draggable: 'true'}).addTo(map);
+
+
+			//https://www.sitepoint.com/jquery-read-text-file/
+			jQuery.get('/static/data/flickr_api.geojson', function (data) {
+				//too much to disply
+				//L.geoJSON(data).addTo(map);	
+				flickr_data = data;
+			});	
+			
+		var lat;
+		var lon;
+
 		// 4 Query Flickr API with draggable marker
-		function onMapClick(e) {
+		function onDrag(e) {
 
 			// https://gis.stackexchange.com/questions/80306/leaflet-draggable-marker 
 			// & buffer: https://stackoverflow.com/questions/28867243/turf-buffer-and-a-draggable-marker
-			marker = new L.marker(e.latlng, 
-				{ draggable: 'true' });
 			
-				marker.on('dragend', function (event) {
-				var marker = event.target;
-				var position = marker.getLatLng();
-				marker.setLatLng(new L.LatLng(position.lat, position.lng), { draggable: 'true' });
-				map.panTo(new L.LatLng(position.lat, position.lng))
-				
-												
-			});
-			map.addLayer(marker);
-
-			map.on("moveend", function () {
-				var buffered = turf.buffer(marker.toGeoJSON(), 0.2, { units: "miles" });
-				L.geoJSON(buffered).addTo(map);
-			});
-
-				
-			//var position = marker.getLatLng();
-			//console.log(position.lat, position.lng);
+			// Get coordinates after drag: https://gis.stackexchange.com/questions/272232/get-lat-lon-out-of-function-in-leaflet
+			lat = e.latlng.lat;
+			lon = e.latlng.lng;
+			
+			console.log(lon + ' ' + lat);
+			    
+			var point_drag = turf.point([lon, lat]);
+			var polygon_drag = turf.buffer(point_drag, 0.2);
+					
 		
+		
+			//console.log(flickr_data);
+			var ptsWithin = turf.pointsWithinPolygon(flickr_data, polygon_drag);
+			//console.log(ptsWithin);
+			//console.log(JSON.stringify(ptsWithin));
+			L.geoJSON(ptsWithin).addTo(map);
+			//console.log(ptsWithin.features.length);
+			
+			//console.log(ptsWithin.length);	
+			// loop syntax from co-pilot
+			for (let i = 0; i < ptsWithin.features.length; i++) {
+					const feature = ptsWithin.features[i];
+					const props = feature.properties;
 
+					//console.log(props.title);
 
-			//var url = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=aef635a622e9a3e2d5e2c519481331dd&lat=${lat}&lon=${lng}&radius=0.2&max_taken_date=1995-01-01&tag=mauer,wall&format=json&nojsoncallback=1`
+					//https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/Image
+					//Concat von Copilot
+					const myImage = new Image();
+					myImage.src = `https://live.staticflickr.com/${props.server}/${props.id}_${props.secret}_c.jpg`;
+				
+					document.body.appendChild(myImage);
+				
 
-			//console.log(url);
-			// https://www.sitepoint.com/jquery-read-text-file/
-			jQuery.get('/static/data/flickr_api.geojson', function (data) {
+				}
 
-				// too much to disply
-				//L.geoJSON(data).addTo(map);	
-
-
-			});
-
-
+			
+		
 
 
 			/*
@@ -139,11 +157,11 @@
 			} 
 			
 );*/
-		}
+		} 
 
 
 
-		map.once('click', onMapClick);
+		map.on('mouseup', onDrag);
 
 		{% endblock %}
 
