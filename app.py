@@ -42,12 +42,14 @@ def index():
         # Get data from Flickr API
         #api_url = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=aef635a622e9a3e2d5e2c519481331dd&lat=52.48531528648545&lon=13.458874225616457&radius=0.2&max_taken_date=1995-01-01&tag=mauer,wall&format=json&nojsoncallback=1"
         url = "https://api.flickr.com/services/rest/" #?method=flickr.photos.search&api_key=aef635a622e9a3e2d5e2c519481331dd&lat=52.48531528648545&lon=13.458874225616457&radius=0.2&max_taken_date=1995-01-01&tag=mauer,wall&format=json&nojsoncallback=1"
+
+        flickr_api_key = os.environ.get('FLICKR_API_KEY')
         
         def api_request_per_page(page):
             response = requests.get(url, 
                 params = {
                     "method": "flickr.photos.search",
-                    "api_key": "aef635a622e9a3e2d5e2c519481331dd",
+                    "api_key": flickr_api_key,
                     #"lon": 13.45928192138672,
                     #"lat": 52.485498223625996,
                     #"bbox": "13.077850,52.374342,13.564682,52.685956",
