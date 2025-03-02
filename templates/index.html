@@ -20,6 +20,11 @@
 		integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 	<script src="https://cdn.jsdelivr.net/npm/leaflet.path.drag@0.0.6/src/Path.Drag.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+
+	<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+	<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+	<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster-src.js"></script>
+
 </head>
 
 
@@ -84,8 +89,12 @@
 			//https://www.sitepoint.com/jquery-read-text-file/
 			jQuery.get('/static/data/flickr_api.geojson', function (data) {
 				//too much to disply
-				L.geoJSON(data).addTo(map);	
+				//L.geoJSON(data).addTo(map);	
 				flickr_data = data;
+				
+				//https://stackoverflow.com/questions/70686232/cluster-geojson-layer-doesnt-work-with-marker-filtering
+				const mcg = L.markerClusterGroup().addTo(map);
+				L.geoJSON(data).addData(data).addTo(mcg);
 			});	
 			
 		var lat;
