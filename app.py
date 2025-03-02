@@ -43,15 +43,16 @@ def index():
         gs_segementize.to_file('static/data/segments.shp')
         bounding_boxes = gs_segementize.envelope.to_crs(4326).bounds
         #bounding_boxes.to_file('static/data/bbox.shp')  
-        '''
+        ''' 
         
+        '''
         # Create grid for API request
         grid = gpd.read_file('static/data/grid_1000.geojson')
         bounding_boxes = grid.geometry.bounds   
 
         # Create empty list for photos
         photos = []
-        '''
+       
         for box in bounding_boxes.values.tolist():
             
             minx = box[0]
