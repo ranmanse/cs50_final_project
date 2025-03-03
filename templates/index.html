@@ -174,8 +174,9 @@
 		
 
 
-		map.on('drag', onDrag);
-
+		//map.on('drag', onDrag);
+		map._layers['polygon_drag'].fire('click');
+		
 		{% endblock %}
 
 	</script>
