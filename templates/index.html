@@ -29,165 +29,187 @@
 
 
 <body>
-	<div id="map"></div>
+	<!-- https://coder-coder.com/display-divs-side-by-side/ -->
+	<div class="float-container">
+		<div class="float-child">
+			<div id="map" class="map"></div>
+		</div>
+		<div class="float-child">
+			<div id="image-container"></div>
+		</div>
+	</div>
 
-	{% block scripts %}
-	<script>
-		// 1 Map initialization
-		var map = L.map('map').setView([52.486753, 13.488722], 13);
+			{% block scripts %}
+			<script>
+				// 1 Map initialization
+				var map = L.map('map').setView([52.486753, 13.488722], 13);
 
-		// 2a) Add backggroud map: Luftbilder 1989
-		var luftbilder1989 = L.tileLayer.wms('https://gdi.berlin.de/services/wms/berlinermauer?', {
-			layers: 'e_luftbilder1989'
-		});
+				// 2a) Add backggroud map: Luftbilder 1989
+				var luftbilder1989 = L.tileLayer.wms('https://gdi.berlin.de/services/wms/berlinermauer?', {
+					layers: 'e_luftbilder1989'
+				});
 
-		// 2b) Add backggroud map: DOPs
-		var luftbilder2024 = L.tileLayer.wms('https://gdi.berlin.de/services/wms/truedop_2024?', {
-			layers: 'truedop_2024'
-		}).addTo(map);
-
-
-		// 2c) Add backggroud map: OSM
-		var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			maxZoom: 19,
-			attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-		}).addTo(map);
-
-
-
-		var baseMaps = {
-			"Luftbilder 1989": luftbilder1989,
-			"Openstreetmap": osm,
-			"Digitale farbige TrueOrthophotos 2024 (DOP20RGBI)": luftbilder2024
-		};
-		var layerControl = L.control.layers(baseMaps).addTo(map);
+				// 2b) Add backggroud map: DOPs
+				var luftbilder2024 = L.tileLayer.wms('https://gdi.berlin.de/services/wms/truedop_2024?', {
+					layers: 'truedop_2024'
+				}).addTo(map);
 
 
-		// 3 a) Fetch GeoJSON (WFS Verlauf Berliner Mauer)
-		const geometry = JSON.parse({{ geometry| tojson | safe }});
+				// 2c) Add backggroud map: OSM
+				var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+					maxZoom: 19,
+					attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+				}).addTo(map);
 
 
-		// Von Co-Pilot
-		// Get DOM elements
 
-		L.geoJSON(geometry, {
-			// You can add style options here if needed
-			style: {
-				color: "#ff7800",
-				weight: 2,
-				opacity: 0.65
-			}
-		}).addTo(map);
-
-		
-
-		var start_point = turf.point([13.488722, 52.486753]);
-			var polygon = turf.buffer(start_point, 0.2);
-			L.geoJSON(polygon, {draggable: 'true'}).addTo(map);
+				var baseMaps = {
+					"Luftbilder 1989": luftbilder1989,
+					"Openstreetmap": osm,
+					"Digitale farbige TrueOrthophotos 2024 (DOP20RGBI)": luftbilder2024
+				};
+				var layerControl = L.control.layers(baseMaps).addTo(map);
 
 
-			//https://www.sitepoint.com/jquery-read-text-file/
-			jQuery.get('/static/data/flickr_api.geojson', function (data) {
-				//too much to disply
-				//L.geoJSON(data).addTo(map);	
-				flickr_data = data;
+				// 3 a) Fetch GeoJSON (WFS Verlauf Berliner Mauer)
+				const geometry = JSON.parse({{ geometry| tojson | safe }});
+
+
+				// Von Co-Pilot
+				// Get DOM elements
+
+				L.geoJSON(geometry, {
+					// You can add style options here if needed
+					style: {
+						color: "#ff7800",
+						weight: 2,
+						opacity: 0.65
+					}
+				}).addTo(map);
+
 				
-				//https://stackoverflow.com/questions/70686232/cluster-geojson-layer-doesnt-work-with-marker-filtering
-				const mcg = L.markerClusterGroup().addTo(map);
-				L.geoJSON(data).addData(data).addTo(mcg);
-			});	
-			
-		var lat;
-		var lon;
 
-		// 4 Query Flickr API with draggable marker
-		function onDrag(e) {
+				var start_point = turf.point([13.488722, 52.486753]);
+					var polygon = turf.buffer(start_point, 0.2);
+					L.geoJSON(polygon, {draggable: 'true'}).addTo(map);
 
-			// https://gis.stackexchange.com/questions/80306/leaflet-draggable-marker 
-			// & buffer: https://stackoverflow.com/questions/28867243/turf-buffer-and-a-draggable-marker
-			
-			// Get coordinates after drag: https://gis.stackexchange.com/questions/272232/get-lat-lon-out-of-function-in-leaflet
-			lat = e.latlng.lat;
-			lon = e.latlng.lng;
-			
-			console.log(lon + ' ' + lat);
-			    
-			var point_drag = turf.point([lon, lat]);
-			var polygon_drag = turf.buffer(point_drag, 0.2);
+
+					//https://www.sitepoint.com/jquery-read-text-file/
+					jQuery.get('/static/data/flickr_api.geojson', function (data) {
+						//too much to disply
+						//L.geoJSON(data).addTo(map);	
+						flickr_data = data;
+						
+						//https://stackoverflow.com/questions/70686232/cluster-geojson-layer-doesnt-work-with-marker-filtering
+						const mcg = L.markerClusterGroup().addTo(map);
+						L.geoJSON(data).addData(data).addTo(mcg);
+					});	
 					
-		
-		
-			//console.log(flickr_data);
-			var ptsWithin = turf.pointsWithinPolygon(flickr_data, polygon_drag);
-			//console.log(ptsWithin);
-			//console.log(JSON.stringify(ptsWithin));
-			L.geoJSON(ptsWithin).addTo(map);
-			//console.log(ptsWithin.features.length);
+				var lat;
+				var lon;
+
+
+
+				// 4 Query Flickr API with draggable marker
+				function onDrag(e) {
+
+					// https://gis.stackexchange.com/questions/80306/leaflet-draggable-marker 
+					// & buffer: https://stackoverflow.com/questions/28867243/turf-buffer-and-a-draggable-marker
+					
+					// Get coordinates after drag: https://gis.stackexchange.com/questions/272232/get-lat-lon-out-of-function-in-leaflet
+					lat = e.latlng.lat;
+					lon = e.latlng.lng;
+					
+					console.log(lon + ' ' + lat);
+						
+					var point_drag = turf.point([lon, lat]);
+					var polygon_drag = turf.buffer(point_drag, 0.2);
+							
+				
+				
+					//console.log(flickr_data);
+					var ptsWithin = turf.pointsWithinPolygon(flickr_data, polygon_drag);
+					//console.log(ptsWithin);
+					//console.log(JSON.stringify(ptsWithin));
+					L.geoJSON(ptsWithin).addTo(map);
+					//console.log(ptsWithin.features.length);e_luftbilder1989
+					
+					// From co-pilot: remove all images before querying, except Basemaps: OSM, DOPs and Berliner Mauer
+					//document.querySelectorAll('img:not([src*="tile.openstreetmap.org"]):not([src*="https://gdi.berlin.de/services/wms/truedop_2024"]):not([src*="https://gdi.berlin.de/services/wms/berlinermauer"])').forEach(img => img.remove());
+					
+
+					//console.log(ptsWithin.length);	
+					// loop syntax from co-pilot
+					/*
+					for (let i = 0; i < ptsWithin.features.length; i++) {
+							const feature = ptsWithin.features[i];
+							const props = feature.properties;
+
+							//console.log(props.title);
+
+							//https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/Image
+							//Concat von Copilot
+							const myImage = new Image();
+							myImage.src = `https://live.staticflickr.com/${props.server}/${props.id}_${props.secret}_c.jpg`;
+							document.body.appendChild(myImage);
+						
+
+						}
+					*/
+					
+					// Update image append code (Co-Pilot)
+					const imageContainer = document.getElementById('image-container');
+					imageContainer.innerHTML = ''; // Clear existing images
+					ptsWithin.features.forEach(feature => {
+						const myImage = new Image();
+						myImage.src = `https://live.staticflickr.com/${feature.properties.server}/${feature.properties.id}_${feature.properties.secret}_c.jpg`;
+						imageContainer.appendChild(myImage);
+						
+					});
+
+
+					/*
+					$.getJSON(url, function(data){
+						//console.log(JSON.stringify(data));
+						
+						for (let i = 0; i < data.photos.photo.length; i++) {
+							console.log(data.photos.photo[i].title);
+
+							// https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/Image
+							// Concat von Copilot
+							const myImage = new Image();
+							myImage.src = `https://live.staticflickr.com/${data.photos.photo[i].server}/${data.photos.photo[i].id}_${data.photos.photo[i].secret}_c.jpg`;
+						
+							document.body.appendChild(myImage);
+						
+
+						}
+
+					} 
+					
+		);*/
+				} 
+
+
+
+				
+
+
+				map.on('mouseup', onDrag);
+
+				{% endblock %}
+
+			</script>
+
+
+			<!--
+			<h2><div id="galleryTitle"></div></h2>
+			<div style="clear:both;"/>
+			<div id="flickr"/>
+			-->
+
 			
-		
-
-			//console.log(ptsWithin.length);	
-			// loop syntax from co-pilot
-			for (let i = 0; i < ptsWithin.features.length; i++) {
-					const feature = ptsWithin.features[i];
-					const props = feature.properties;
-
-					//console.log(props.title);
-
-					//https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/Image
-					//Concat von Copilot
-					const myImage = new Image();
-					myImage.src = `https://live.staticflickr.com/${props.server}/${props.id}_${props.secret}_c.jpg`;
-					document.body.appendChild(myImage);
-				
-
-				}
-
-			
-		
-
-
-			/*
-			$.getJSON(url, function(data){
-				//console.log(JSON.stringify(data));
-				
-				for (let i = 0; i < data.photos.photo.length; i++) {
-					console.log(data.photos.photo[i].title);
-
-					// https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/Image
-					// Concat von Copilot
-					const myImage = new Image();
-					myImage.src = `https://live.staticflickr.com/${data.photos.photo[i].server}/${data.photos.photo[i].id}_${data.photos.photo[i].secret}_c.jpg`;
-				
-					document.body.appendChild(myImage);
-				
-
-				}
-
-			} 
-			
-);*/
-		} 
-
-
-
-		
-
-
-		map.on('mouseup', onDrag);
-
-		{% endblock %}
-
-	</script>
-
-
-	<!--
-	<h2><div id="galleryTitle"></div></h2>
-	<div style="clear:both;"/>
-	<div id="flickr"/>
-	-->
-
-
+	
 </body>
 
 </html>

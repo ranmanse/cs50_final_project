@@ -1,7 +1,7 @@
 #map { 
-  height: 400px; 
-  width: 50%;
-  margin-bottom: 20px;
+  height: 75vh; 
+  width: 100%;
+  /*margin-bottom: 20px;*/
 }
 
 img {
@@ -16,3 +16,19 @@ img {
   border: none !important;
   max-height: none !important;
 }
+
+
+/* https://coder-coder.com/display-divs-side-by-side/ /
+
+.float-container {
+  border: 3px solid #fff;
+  padding: 20px;
+}
+.float-child {
+  width: 47%;
+  float: left;
+  padding: 20px;
+  border: 2px solid red;
+}  
+
+
