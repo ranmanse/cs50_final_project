@@ -45,7 +45,7 @@ def index():
         #bounding_boxes.to_file('static/data/bbox.shp')  
         ''' 
         
-        '''
+        
         # Create grid for API request
         grid = gpd.read_file('static/data/grid_1000.geojson')
         bounding_boxes = grid.geometry.bounds   
@@ -66,7 +66,7 @@ def index():
             url = "https://api.flickr.com/services/rest/" 
             flickr_api_key = os.environ.get('FLICKR_API_KEY')
             
-            
+            '''
             def api_request_per_page(page, bbox):
                 response = requests.get(url, 
                     params = {
@@ -120,7 +120,7 @@ def index():
             with open('static/data/flickr_api.geojson', 'w') as f:
                 #json.dump(photos, f)
                 geojson.dump(gdf, f)
-           ''' 
+           '''
         return render_template('index.html', geometry = data_json)
     
 
