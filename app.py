@@ -86,7 +86,7 @@ def index():
                         "per_page" : 500,
                         "format": "json",
                         "nojsoncallback": 1,
-                        "extras": "geo"
+                        "extras": "geo, licence, date_taken, owner_name, url_o, tags"
 
                     }).json()
                 return response
@@ -120,7 +120,7 @@ def index():
             with open('static/data/flickr_api.geojson', 'w') as f:
                 #json.dump(photos, f)
                 geojson.dump(gdf, f)
-            ''' 
+           ''' 
         return render_template('index.html', geometry = data_json)
     
 
