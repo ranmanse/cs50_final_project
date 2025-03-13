@@ -160,11 +160,22 @@
 					// Update image append code (Co-Pilot)
 					const imageContainer = document.getElementById('image-container');
 					imageContainer.innerHTML = ''; // Clear existing images
+				
+					// Loop through each feature and create an image element
 					ptsWithin.features.forEach(feature => {
 						const myImage = new Image();
 						myImage.src = `https://live.staticflickr.com/${feature.properties.server}/${feature.properties.id}_${feature.properties.secret}_c.jpg`;
 						imageContainer.appendChild(myImage);
+
+						//https://stackoverflow.com/questions/4772774/how-do-i-create-a-link-using-javascript
+						var a = document.createElement('a');
+						a.className += ("link_text")
+						var linkText = document.createTextNode(`${feature.properties.title}\n`);
+						a.appendChild(linkText);
 						
+						a.href = `https://www.flickr.com/photos/${feature.properties.owner}/${feature.properties.id}`;
+						imageContainer.appendChild(a);
+
 					});
 
 
