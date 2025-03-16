@@ -5,10 +5,10 @@
 }
 
 img {
-  max-height: 50%; 
+  max-height: 275px; 
   margin: 0 15px 0 0;
   border: 1px solid #ddd;
-  vertical-align: middle;
+  /*vertical-align: middle;*/
 }
 
 /* Specific styling for map tiles */
@@ -33,6 +33,6 @@ img {
 .link_text {
   color: #000000;
   text-decoration: none;
-  vertical-align: middle;
-  overflow-wrap: break-word;
+  /*vertical-align: middle;*/ 
+   overflow-wrap: break-word;
 }
