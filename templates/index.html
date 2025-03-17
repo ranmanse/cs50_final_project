@@ -21,10 +21,11 @@
 	<script src="https://cdn.jsdelivr.net/npm/leaflet.path.drag@0.0.6/src/Path.Drag.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
 
+	<!-- Marker Cluster -->
 	<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
 	<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
 	<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster-src.js"></script>
-
+	
 </head>
 
 
@@ -86,9 +87,8 @@
 						opacity: 0.65
 					}
 				}).addTo(map);
-
 				
-
+				
 				var start_point = turf.point([13.488722, 52.486753]);
 					var polygon = turf.buffer(start_point, 0.2);
 					L.geoJSON(polygon, {draggable: 'true'}).addTo(map);
@@ -103,6 +103,7 @@
 						//https://stackoverflow.com/questions/70686232/cluster-geojson-layer-doesnt-work-with-marker-filtering
 						const mcg = L.markerClusterGroup().addTo(map);
 						L.geoJSON(data).addData(data).addTo(mcg);
+						
 					});	
 					
 				var lat;
@@ -163,19 +164,32 @@
 				
 					// Loop through each feature and create an image element
 					ptsWithin.features.forEach(feature => {
+						
+						var d = document.createElement('div');
+						d.className += ("image_subgrid");
+						imageContainer.appendChild(d);
+
 						const myImage = new Image();
 						myImage.src = `https://live.staticflickr.com/${feature.properties.server}/${feature.properties.id}_${feature.properties.secret}_c.jpg`;
-						imageContainer.appendChild(myImage);
+						myImage.className += ("image");
+						d.appendChild(myImage);
 
+						
 						//https://stackoverflow.com/questions/4772774/how-do-i-create-a-link-using-javascript
 						var a = document.createElement('a');
-						a.className += ("link_text")
-						var linkText = document.createTextNode(`${feature.properties.title}\n`);
+						a.className += ("link_text");
+						
+						var linkText = document.createTextNode(`${feature.properties.title} by ${feature.properties.ownername}`);
 						a.appendChild(linkText);
 						
-						a.href = `https://www.flickr.com/photos/${feature.properties.owner}/${feature.properties.id}`;
-						imageContainer.appendChild(a);
-
+						a.href = `https://www.flickr.com/photos/${feature.properties.owner}/${feature.properties.id}`, 'target =_blank';
+						
+						// In neuem Tab öffnen: https://www.dhiwise.com/post/html-open-link-in-new-tab-improve-user-navigation
+						a.setAttribute('target', '_blank');
+						a.setAttribute('rel', 'noopener noreferrer');	
+						
+						d.appendChild(a);
+						
 					});
 
 
