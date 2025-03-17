@@ -1,3 +1,5 @@
+
+
 #map { 
   height: 75vh; 
   width: 100%;
@@ -5,10 +7,9 @@
 }
 
 img {
-  max-height: 275px; 
+  max-height: inherit; 
   margin: 0 15px 0 0;
-  border: 1px solid #ddd;
-  /*vertical-align: middle;*/
+  /*border: 1px solid #ddd; */
 }
 
 /* Specific styling for map tiles */
@@ -23,8 +24,19 @@ img {
 
 .grid-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, 1fr);
   grid-gap: 20px;
+}
+
+
+
+.image_subgrid {
+  display: grid;
+  grid-template-rows: grid;
+  grid-template-rows: repeat(auto-fit, 1fr);
+  grid-template-columns: repeat(auto-fit, 1fr);
+  height: 1 fr;
+  
 }
 
 
