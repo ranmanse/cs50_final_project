@@ -18,7 +18,6 @@
 		integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
 		integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-	<script src="https://cdn.jsdelivr.net/npm/leaflet.path.drag@0.0.6/src/Path.Drag.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
 
 	<!-- Marker Cluster -->
@@ -52,7 +51,7 @@
 	</div>
 
 
-	{% block scripts %}
+	
 	<script>
 		// 1 Map initialization
 		var map = L.map('map').setView([52.486753, 13.488722], 13);
@@ -84,15 +83,17 @@
 		};
 		var layerControl = L.control.layers(baseMaps).addTo(map);
 		
-		
-		// 3 a) Fetch GeoJSON (WFS Verlauf Berliner Mauer)
-		const geometry = JSON.parse({{ geometry| tojson | safe }});
+		{% block scripts %}
 
+		// 2d) Fetch GeoJSON (WFS Verlauf Berliner Mauer)
+		const wall_geometry = JSON.parse({{ wall_geometry| tojson | safe }});
+		
+		{% endblock %}
 
 		// Von Co-Pilot
 		// Get DOM elements
 
-		L.geoJSON(geometry, {
+		L.geoJSON(wall_geometry, {
 			// You can add style options here if needed
 			style: {
 				color: "#ff7800",
@@ -101,12 +102,7 @@
 			}
 		}).addTo(map);
 
-
-		var start_point = turf.point([13.488722, 52.486753]);
-		var polygon = turf.buffer(start_point, 0.2);
-		L.geoJSON(polygon, { draggable: 'true' }).addTo(map);
-
-
+		// 3) Fetch GeoJSON (Flickr API)
 		//https://www.sitepoint.com/jquery-read-text-file/
 		jQuery.get('/static/data/flickr_api.geojson', function (data) {
 			//too much to disply
@@ -117,30 +113,53 @@
 			const mcg = L.markerClusterGroup().addTo(map);
 			L.geoJSON(data).addData(data).addTo(mcg);
 
+
+			// https://gis.stackexchange.com/questions/172508/add-an-event-listener-on-a-marker-in-leaflet
+			mcg.on("click", function (event) {
+			var clickedMarker = event.layer;
+			var feature = clickedMarker.feature;
+	
+
+			// Update image append code (Co-Pilot)
+			const imageContainer = document.getElementById('image-container');
+			imageContainer.innerHTML = ''; // Clear existing images
+					
+				// 1) Create div element / subgrid per image
+				var d = document.createElement('div');
+				d.className += ("image_subgrid");
+				imageContainer.appendChild(d);
+
+
+				// 3) Append title to subgrid
+				//https://stackoverflow.com/questions/4772774/how-do-i-create-a-link-using-javascript
+				var a = document.createElement('a');
+				a.className += ("link_text");
+
+				var linkText = document.createTextNode(`${feature.properties.title} by ${feature.properties.ownername}`);
+				a.appendChild(linkText);
+
+				a.href = `https://www.flickr.com/photos/${feature.properties.owner}/${feature.properties.id}`, 'target =_blank';
+
+				// In neuem Tab öffnen: https://www.dhiwise.com/post/html-open-link-in-new-tab-improve-user-navigation
+				a.setAttribute('target', '_blank');
+				a.setAttribute('rel', 'noopener noreferrer');
+
+				d.appendChild(a);
+				
+				// 2) Append image to subgrid	
+				const myImage = new Image();
+				myImage.src = `https://live.staticflickr.com/${feature.properties.server}/${feature.properties.id}_${feature.properties.secret}_c.jpg`;
+				myImage.className += ("image");
+				d.appendChild(myImage);
+			
+			});
+
 		});
 
-		var lat;
-		var lon;
-
-
-
-		// 4 Query Flickr API with draggable marker
+		
+		// 4 Query GeoJSONFlickr API 
 		function onDrag(e) {
-
-			// https://gis.stackexchange.com/questions/80306/leaflet-draggable-marker 
-			// & buffer: https://stackoverflow.com/questions/28867243/turf-buffer-and-a-draggable-marker
-
-			// Get coordinates after drag: https://gis.stackexchange.com/questions/272232/get-lat-lon-out-of-function-in-leaflet
-			/*
-			lat = e.latlng.lat;
-			lon = e.latlng.lng;
-
-			console.log(lon + ' ' + lat);
-
-			var point_drag = turf.point([lon, lat]);
-			var polygon_drag = turf.buffer(point_drag, 0.2);
-			*/
-
+			
 			// Get bounds from map: https://runebook.dev/en/articles/leaflet/index/map-getbounds
 			var bounds = map.getBounds();
 			
@@ -148,15 +167,12 @@
 			bound_minx = bounds.getSouthWest().lng;
 			bound_maxy = bounds.getNorthEast().lat;
 			bound_maxx = bounds.getNorthEast().lng;
-
 			
 			bbox = [bound_minx, bound_miny, bound_maxx, bound_maxy];
 
 			var polygon_drag = turf.bboxPolygon(bbox);
-
 			
 			var ptsWithin = turf.pointsWithinPolygon(flickr_data, polygon_drag);
-			
 			
 			// Update image append code (Co-Pilot)
 			const imageContainer = document.getElementById('image-container');
@@ -195,26 +211,9 @@
 								
 			});
 		}
-
-		//map.on('mouseup', onDrag);
 		map.on('moveend', onDrag);
 
-		{% endblock %}
-
-
-
-
-
 	</script>
-
-
-	<!--
-			<h2><div id="galleryTitle"></div></h2>
-			<div style="clear:both;"/>
-			<div id="flickr"/>
-			-->
-
-
 
 </body>
 

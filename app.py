@@ -77,11 +77,12 @@ def index():
                         #"bbox": "13.077850,52.374342,13.564682,52.685956",
                         #"bbox": "13.412504,52.468456,13.499966,52.509274",
                         "bbox": bbox,
+                        #"license": "1,2,3,4,5,6,7,8,9,10",
                         #"radius": 1,
                         #"accuracy": 11,
                         "max_taken_date": "1960-01-01",
                         "max_taken_date": "1990-12-31",
-                        "tag": "berlin wall, berliner mauer, wall, mauer",
+                        "tag": "berlin wall, berliner mauer, wall, mauer, Sektorengrenze, Die Mauer, The Wall, Deutsche Teilung, Checkpoint, Antifaschistischer Schutzwall",
                         "page": page,
                         "per_page" : 500,
                         "format": "json",
@@ -89,6 +90,7 @@ def index():
                         "extras": "geo, licence, date_taken, owner_name, url_o, tags"
 
                     }).json()
+               
                 return response
             
             # Acces response as dictionary - From Co-Pilot: https://www.copilotsearch.com/posts/how-to-use-the-flickr-api 
@@ -120,8 +122,8 @@ def index():
             with open('static/data/flickr_api.geojson', 'w') as f:
                 #json.dump(photos, f)
                 geojson.dump(gdf, f)
-           '''
-        return render_template('index.html', geometry = data_json)
+        '''
+        return render_template('index.html', wall_geometry = data_json)
     
 
 
