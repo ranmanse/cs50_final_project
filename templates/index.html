@@ -25,6 +25,8 @@
 	<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
 	<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster-src.js"></script>
 
+	<!-- Selfmade Scripts -->
+	<script src="/static/script.js"></script>
 </head>
 
 
@@ -47,7 +49,9 @@
 			<div class = "map" id="map"></div>
 			<div class = "image-container" id="image-container"></div>
 		</div>
-		<div class="footer"></div>
+		<div class="footer">
+			<p>Dieses Produkt verwendet die Flickr API, ist jedoch nicht von SmugMug, Inc. bestätigt oder zertifiziert.</p>
+		</div>
 	</div>
 
 
@@ -102,55 +106,27 @@
 			}
 		}).addTo(map);
 
+
+		
+
 		// 3) Fetch GeoJSON (Flickr API)
 		//https://www.sitepoint.com/jquery-read-text-file/
 		jQuery.get('/static/data/flickr_api.geojson', function (data) {
-			//too much to disply
-			//L.geoJSON(data).addTo(map);	
 			flickr_data = data;
 
 			//https://stackoverflow.com/questions/70686232/cluster-geojson-layer-doesnt-work-with-marker-filtering
 			const mcg = L.markerClusterGroup().addTo(map);
-			L.geoJSON(data).addData(data).addTo(mcg);
-
+			L.geoJSON(data).addTo(mcg);
 
 			// https://gis.stackexchange.com/questions/172508/add-an-event-listener-on-a-marker-in-leaflet
 			mcg.on("click", function (event) {
 			var clickedMarker = event.layer;
 			var feature = clickedMarker.feature;
-	
 
-			// Update image append code (Co-Pilot)
 			const imageContainer = document.getElementById('image-container');
 			imageContainer.innerHTML = ''; // Clear existing images
-					
-				// 1) Create div element / subgrid per image
-				var d = document.createElement('div');
-				d.className += ("image_subgrid");
-				imageContainer.appendChild(d);
-
-
-				// 3) Append title to subgrid
-				//https://stackoverflow.com/questions/4772774/how-do-i-create-a-link-using-javascript
-				var a = document.createElement('a');
-				a.className += ("link_text");
-
-				var linkText = document.createTextNode(`${feature.properties.title} by ${feature.properties.ownername}`);
-				a.appendChild(linkText);
-
-				a.href = `https://www.flickr.com/photos/${feature.properties.owner}/${feature.properties.id}`, 'target =_blank';
-
-				// In neuem Tab öffnen: https://www.dhiwise.com/post/html-open-link-in-new-tab-improve-user-navigation
-				a.setAttribute('target', '_blank');
-				a.setAttribute('rel', 'noopener noreferrer');
-
-				d.appendChild(a);
-				
-				// 2) Append image to subgrid	
-				const myImage = new Image();
-				myImage.src = `https://live.staticflickr.com/${feature.properties.server}/${feature.properties.id}_${feature.properties.secret}_c.jpg`;
-				myImage.className += ("image");
-				d.appendChild(myImage);
+			
+			showImage(feature);
 			
 			});
 
@@ -167,11 +143,9 @@
 			bound_minx = bounds.getSouthWest().lng;
 			bound_maxy = bounds.getNorthEast().lat;
 			bound_maxx = bounds.getNorthEast().lng;
-			
 			bbox = [bound_minx, bound_miny, bound_maxx, bound_maxy];
 
 			var polygon_drag = turf.bboxPolygon(bbox);
-			
 			var ptsWithin = turf.pointsWithinPolygon(flickr_data, polygon_drag);
 			
 			// Update image append code (Co-Pilot)
@@ -180,35 +154,7 @@
 
 			// Loop through each feature and create an image element
 			ptsWithin.features.forEach(feature => {
-				
-				// 1) Create div element / subgrid per image
-				var d = document.createElement('div');
-				d.className += ("image_subgrid");
-				imageContainer.appendChild(d);
-
-
-				// 3) Append title to subgrid
-				//https://stackoverflow.com/questions/4772774/how-do-i-create-a-link-using-javascript
-				var a = document.createElement('a');
-				a.className += ("link_text");
-
-				var linkText = document.createTextNode(`${feature.properties.title} by ${feature.properties.ownername}`);
-				a.appendChild(linkText);
-
-				a.href = `https://www.flickr.com/photos/${feature.properties.owner}/${feature.properties.id}`, 'target =_blank';
-
-				// In neuem Tab öffnen: https://www.dhiwise.com/post/html-open-link-in-new-tab-improve-user-navigation
-				a.setAttribute('target', '_blank');
-				a.setAttribute('rel', 'noopener noreferrer');
-
-				d.appendChild(a);
-				
-				// 2) Append image to subgrid	
-				const myImage = new Image();
-				myImage.src = `https://live.staticflickr.com/${feature.properties.server}/${feature.properties.id}_${feature.properties.secret}_c.jpg`;
-				myImage.className += ("image");
-				d.appendChild(myImage);
-								
+				showImage(feature);							
 			});
 		}
 		map.on('moveend', onDrag);
