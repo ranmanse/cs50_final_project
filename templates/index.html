@@ -131,6 +131,7 @@
 			// & buffer: https://stackoverflow.com/questions/28867243/turf-buffer-and-a-draggable-marker
 
 			// Get coordinates after drag: https://gis.stackexchange.com/questions/272232/get-lat-lon-out-of-function-in-leaflet
+			/*
 			lat = e.latlng.lat;
 			lon = e.latlng.lng;
 
@@ -138,50 +139,40 @@
 
 			var point_drag = turf.point([lon, lat]);
 			var polygon_drag = turf.buffer(point_drag, 0.2);
-
-
-
-			//console.log(flickr_data);
-			var ptsWithin = turf.pointsWithinPolygon(flickr_data, polygon_drag);
-			//console.log(ptsWithin);
-			//console.log(JSON.stringify(ptsWithin));
-			L.geoJSON(ptsWithin).addTo(map);
-			//console.log(ptsWithin.features.length);e_luftbilder1989
-
-			// From co-pilot: remove all images before querying, except Basemaps: OSM, DOPs and Berliner Mauer
-			//document.querySelectorAll('img:not([src*="tile.openstreetmap.org"]):not([src*="https://gdi.berlin.de/services/wms/truedop_2024"]):not([src*="https://gdi.berlin.de/services/wms/berlinermauer"])').forEach(img => img.remove());
-
-
-			//console.log(ptsWithin.length);	
-			// loop syntax from co-pilot
-			/*
-			for (let i = 0; i < ptsWithin.features.length; i++) {
-					const feature = ptsWithin.features[i];
-					const props = feature.properties;
-
-					//console.log(props.title);
-
-					//https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/Image
-					//Concat von Copilot
-					const myImage = new Image();
-					myImage.src = `https://live.staticflickr.com/${props.server}/${props.id}_${props.secret}_c.jpg`;
-					document.body.appendChild(myImage);
-				
-
-				}
 			*/
 
+			var bounds = map.getBounds();
+			
+			console.log(bounds);
+			bound_miny = bounds.getSouthWest().lat;
+			bound_minx = bounds.getSouthWest().lng;
+
+			bound_maxy = bounds.getNorthEast().lat;
+			bound_maxx = bounds.getNorthEast().lng;
+
+			console.log(bound_minx + ' ' + bound_miny + ' ' + bound_maxx + ' ' + bound_maxy);
+			bbox = [bound_minx, bound_miny, bound_maxx, bound_maxy];
+
+			var polygon_drag = turf.bboxPolygon(bbox);
+
+			
+			var ptsWithin = turf.pointsWithinPolygon(flickr_data, polygon_drag);
+			
+			
 			// Update image append code (Co-Pilot)
 			const imageContainer = document.getElementById('image-container');
 			imageContainer.innerHTML = ''; // Clear existing images
 
 			// Loop through each feature and create an image element
 			ptsWithin.features.forEach(feature => {
-
+				
+				// 1) Create div element / subgrid per image
 				var d = document.createElement('div');
 				d.className += ("image_subgrid");
 				imageContainer.appendChild(d);
 
+
+				// 3) Append title to subgrid
 				//https://stackoverflow.com/questions/4772774/how-do-i-create-a-link-using-javascript
 				var a = document.createElement('a');
 				a.className += ("link_text");
@@ -196,9 +187,11 @@
 				a.setAttribute('rel', 'noopener noreferrer');
 
 				d.appendChild(a);
+				
+				
+			
 
-
-
+				// 2) Append image to subgrid	
 				const myImage = new Image();
 				myImage.src = `https://live.staticflickr.com/${feature.properties.server}/${feature.properties.id}_${feature.properties.secret}_c.jpg`;
 				myImage.className += ("image");
@@ -206,30 +199,15 @@
 
 				
 				
+			
+				
 				
 			});
 
 
-			/*
-			$.getJSON(url, function(data){
-				//console.log(JSON.stringify(data));
-				
-				for (let i = 0; i < data.photos.photo.length; i++) {
-					console.log(data.photos.photo[i].title);
-
-					// https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/Image
-					// Concat von Copilot
-					const myImage = new Image();
-					myImage.src = `https://live.staticflickr.com/${data.photos.photo[i].server}/${data.photos.photo[i].id}_${data.photos.photo[i].secret}_c.jpg`;
-				
-					document.body.appendChild(myImage);
-				
-
-				}
-
-			} 
 			
-);*/
+			
+
 		}
 
 
@@ -237,7 +215,10 @@
 
 
 
-		map.on('mouseup', onDrag);
+		//map.on('mouseup', onDrag);
+		map.on('moveend', onDrag);
+
+
 
 		{% endblock %}
 
