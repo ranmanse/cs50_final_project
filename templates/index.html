@@ -57,7 +57,7 @@
 		// 1 Map initialization
 		var map = L.map('map').setView([52.486753, 13.488722], 13);
 
-		/*
+		
 		// 2a) Add backggroud map: Luftbilder 1989
 		var luftbilder1989 = L.tileLayer.wms('https://gdi.berlin.de/services/wms/berlinermauer?', {
 			layers: 'e_luftbilder1989'
@@ -67,7 +67,7 @@
 		var luftbilder2024 = L.tileLayer.wms('https://gdi.berlin.de/services/wms/truedop_2024?', {
 			layers: 'truedop_2024'
 		}).addTo(map);
-		*/
+		
 
 		// 2c) Add backggroud map: OSM
 		var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -76,15 +76,15 @@
 		}).addTo(map);
 
 
-		/*
+		
 		var baseMaps = {
 			"Luftbilder 1989": luftbilder1989,
 			"Openstreetmap": osm,
 			"Digitale farbige TrueOrthophotos 2024 (DOP20RGBI)": luftbilder2024
 		};
 		var layerControl = L.control.layers(baseMaps).addTo(map);
-		*/
-
+		
+		
 		// 3 a) Fetch GeoJSON (WFS Verlauf Berliner Mauer)
 		const geometry = JSON.parse({{ geometry| tojson | safe }});
 
@@ -141,16 +141,15 @@
 			var polygon_drag = turf.buffer(point_drag, 0.2);
 			*/
 
+			// Get bounds from map: https://runebook.dev/en/articles/leaflet/index/map-getbounds
 			var bounds = map.getBounds();
 			
-			console.log(bounds);
 			bound_miny = bounds.getSouthWest().lat;
 			bound_minx = bounds.getSouthWest().lng;
-
 			bound_maxy = bounds.getNorthEast().lat;
 			bound_maxx = bounds.getNorthEast().lng;
 
-			console.log(bound_minx + ' ' + bound_miny + ' ' + bound_maxx + ' ' + bound_maxy);
+			
 			bbox = [bound_minx, bound_miny, bound_maxx, bound_maxy];
 
 			var polygon_drag = turf.bboxPolygon(bbox);
@@ -188,39 +187,23 @@
 
 				d.appendChild(a);
 				
-				
-			
-
 				// 2) Append image to subgrid	
 				const myImage = new Image();
 				myImage.src = `https://live.staticflickr.com/${feature.properties.server}/${feature.properties.id}_${feature.properties.secret}_c.jpg`;
 				myImage.className += ("image");
 				d.appendChild(myImage);
-
-				
-				
-			
-				
-				
+								
 			});
-
-
-			
-			
-
 		}
-
-
-
-
-
 
 		//map.on('mouseup', onDrag);
 		map.on('moveend', onDrag);
 
-
-
 		{% endblock %}
+
+
+
+
 
 	</script>
 
