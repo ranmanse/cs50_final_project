@@ -47,7 +47,10 @@
 		<div class="header"></div>
 		<div class="body">
 			<div class = "map" id="map"></div>
-			<div class = "image-container" id="image-container"></div>
+			<div class = "gallery" id = "gallery">
+				<div class="image-container" id="image-container"></div>
+				<div class="pagination" id = "pagination"></div>
+			</div>
 		</div>
 		<div class="footer">
 			<p>Dieses Produkt verwendet die Flickr API, ist jedoch nicht von SmugMug, Inc. bestätigt oder zertifiziert.</p>
@@ -135,7 +138,11 @@
 		
 		// 4 Query GeoJSONFlickr API 
 		function onDrag(e) {
-			
+
+			// Update image append code (Co-Pilot)
+			const imageContainer = document.getElementById('image-container');
+			imageContainer.innerHTML = ''; // Clear existing images
+
 			// Get bounds from map: https://runebook.dev/en/articles/leaflet/index/map-getbounds
 			var bounds = map.getBounds();
 			
@@ -148,14 +155,52 @@
 			var polygon_drag = turf.bboxPolygon(bbox);
 			var ptsWithin = turf.pointsWithinPolygon(flickr_data, polygon_drag);
 			
-			// Update image append code (Co-Pilot)
-			const imageContainer = document.getElementById('image-container');
-			imageContainer.innerHTML = ''; // Clear existing images
+			var feature_length = ptsWithin.features.length;
+			console.log('feature_length:' + feature_length);
 
-			// Loop through each feature and create an image element
-			ptsWithin.features.forEach(feature => {
+			var page_start = 1;
+			var page_end;
+		
+			if (Math.trunc(ptsWithin.features.length/30) == 0) {
+				page_end = 1;
+			} else if (Math.trunc(ptsWithin.features.length/30) > 0) {
+				page_end = Math.trunc(ptsWithin.features.length/30) + 1;
+			}
+			
+
+			console.log('page_end:' + page_end);
+
+			var array_start = (30 * page_start) - 30;
+			var array_end = (30 * page_start);
+			
+			// Slice the array accroding to the page
+			var features_slice = ptsWithin.features.slice(array_start, array_end)
+			
+			// Loop through each feature of the slice and create an image element
+			features_slice.forEach(feature => {
 				showImage(feature);							
 			});
+
+		
+        
+			// 4) Create div element / subgrid per button
+			const pagination = document.getElementById('pagination');
+			pagination.innerHTML = ''; // Clear existing buttons
+			
+			var d = document.createElement('div');
+			d.className += ("button_subgrid");
+			pagination.appendChild(d);
+				
+			// Add pagination
+			for (page_start; page_start <= page_end; page_start++) {
+				var button = document.createElement('button');
+				button.innerHTML = page_start;
+				button.className += ("button_subgrid");
+    			d.appendChild(button);
+			}
+			
+
+
 		}
 		map.on('moveend', onDrag);
 

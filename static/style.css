@@ -7,14 +7,14 @@ body {
   height: 100vh;
   width: 100vw;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 0.99fr;
   grid-template-rows: 0.15fr 1fr 0.15fr;
   }
 
 
 .body {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.5fr 0.5fr;
   overflow: hidden;
   column-gap: 10px;
 
@@ -26,13 +26,33 @@ body {
   height: 100%;
   width: 100%;
   /*margin-bottom: 20px;*/
+  
+}
+
+.gallery {
+  display: grid;
+  grid-template-rows: 0.95fr 0.05fr; 
+  overflow: hidden;
+  column-gap: 10px;
+  border: 1px solid #ddd; 
 }
 
 .image-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(175px, 0.8fr));
-  overflow-y: scroll;
+  grid-template-columns: repeat(auto-fit, minmax(175px, 0.2fr));
   column-gap: 10px;
+  overflow-y: scroll;
+ 
+ 
+}
+
+.pagination {
+  display: grid;
+  /*justify-content: center;*/
+  /*align-items: center;*/
+  row-gap: 10px;
+  column-gap: 10px;
+  
 }
 
 img {
@@ -67,8 +87,14 @@ img {
 
   }
 
+  .button_subgrid {
+    display: subgrid; 
+    grid-template-columns: repeat(auto-fit, minmax(0.3, 0.4fr));
+    place-self: center;
+    
+    }
 
-
+   
 
 .link_text {
   color: #000000;
