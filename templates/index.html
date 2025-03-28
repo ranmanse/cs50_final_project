@@ -63,7 +63,7 @@
 		// 1 Map initialization
 		var map = L.map('map').setView([52.486753, 13.488722], 13);
 
-		
+	
 		// 2a) Add backggroud map: Luftbilder 1989
 		var luftbilder1989 = L.tileLayer.wms('https://gdi.berlin.de/services/wms/berlinermauer?', {
 			layers: 'e_luftbilder1989'
@@ -92,11 +92,11 @@
 		
 		{% block scripts %}
 
-		// 2d) Fetch GeoJSON (WFS Verlauf Berliner Mauer)
+		//2d) Fetch GeoJSON (WFS Verlauf Berliner Mauer)
 		const wall_geometry = JSON.parse({{ wall_geometry| tojson | safe }});
 		
 		{% endblock %}
-
+		
 		// Von Co-Pilot
 		// Get DOM elements
 
@@ -112,7 +112,7 @@
 
 		
 
-		// 3) Fetch GeoJSON (Flickr API)
+		// 3) Fetch local GeoJSON (Response of Flickr API)
 		//https://www.sitepoint.com/jquery-read-text-file/
 		jQuery.get('/static/data/flickr_api.geojson', function (data) {
 			flickr_data = data;
@@ -128,81 +128,24 @@
 
 			const imageContainer = document.getElementById('image-container');
 			imageContainer.innerHTML = ''; // Clear existing images
+			const pagination = document.getElementById('pagination');
+    		pagination.innerHTML = ''; // Clear existing buttons
 			
 			showImage(feature);
 			
 			});
 
 		});
-
 		
-		// 4 Query GeoJSONFlickr API 
+			
+		// 4 Query GeoJSON after dragging the map
 		function onDrag(e) {
-
-			// Update image append code (Co-Pilot)
-			const imageContainer = document.getElementById('image-container');
-			imageContainer.innerHTML = ''; // Clear existing images
-
-			// Get bounds from map: https://runebook.dev/en/articles/leaflet/index/map-getbounds
-			var bounds = map.getBounds();
-			
-			bound_miny = bounds.getSouthWest().lat;
-			bound_minx = bounds.getSouthWest().lng;
-			bound_maxy = bounds.getNorthEast().lat;
-			bound_maxx = bounds.getNorthEast().lng;
-			bbox = [bound_minx, bound_miny, bound_maxx, bound_maxy];
-
-			var polygon_drag = turf.bboxPolygon(bbox);
-			var ptsWithin = turf.pointsWithinPolygon(flickr_data, polygon_drag);
-			
-			var feature_length = ptsWithin.features.length;
-			console.log('feature_length:' + feature_length);
-
-			var page_start = 1;
-			var page_end;
-		
-			if (Math.trunc(ptsWithin.features.length/30) == 0) {
-				page_end = 1;
-			} else if (Math.trunc(ptsWithin.features.length/30) > 0) {
-				page_end = Math.trunc(ptsWithin.features.length/30) + 1;
-			}
-			
-
-			console.log('page_end:' + page_end);
-
-			var array_start = (30 * page_start) - 30;
-			var array_end = (30 * page_start);
-			
-			// Slice the array accroding to the page
-			var features_slice = ptsWithin.features.slice(array_start, array_end)
-			
-			// Loop through each feature of the slice and create an image element
-			features_slice.forEach(feature => {
-				showImage(feature);							
-			});
-
-		
-        
-			// 4) Create div element / subgrid per button
-			const pagination = document.getElementById('pagination');
-			pagination.innerHTML = ''; // Clear existing buttons
-			
-			var d = document.createElement('div');
-			d.className += ("button_subgrid");
-			pagination.appendChild(d);
-				
-			// Add pagination
-			for (page_start; page_start <= page_end; page_start++) {
-				var button = document.createElement('button');
-				button.innerHTML = page_start;
-				button.className += ("button_subgrid");
-    			d.appendChild(button);
-			}
-			
-
-
+			fillGallery(1)
 		}
 		map.on('moveend', onDrag);
+
+		// 5) Query GeoJSON according to page numbers
+
 
 	</script>
 
