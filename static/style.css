@@ -87,6 +87,7 @@ img {
   display: subgrid;
   grid-row: span 2;
   border: 1px solid #ddd;
+  margin-bottom: 0.5em;
   }
 
   .button_subgrid {
