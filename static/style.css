@@ -17,6 +17,8 @@ body {
   grid-template-columns: 0.5fr 0.5fr;
   overflow: hidden;
   column-gap: 10px;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 
 }
 
@@ -84,7 +86,7 @@ img {
 .image_subgrid {
   display: subgrid;
   grid-row: span 2;
-
+  border: 1px solid #ddd;
   }
 
   .button_subgrid {
@@ -106,6 +108,7 @@ img {
 
 .header {
   background-color: #F9F3D5;
+  text-align: center;
 }
 
 .footer {
