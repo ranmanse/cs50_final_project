@@ -60,19 +60,27 @@
 
 	
 	<script>
-		// 1 Map initialization
-		var map = L.map('map').setView([52.486753, 13.488722], 13);
+		var current_page;
 
-	
+		// 1 Map initialization
+		var map = L.map('map').setView([52.52, 13.35], 11);
+		
 		// 2a) Add backggroud map: Luftbilder 1989
 		var luftbilder1989 = L.tileLayer.wms('https://gdi.berlin.de/services/wms/berlinermauer?', {
 			layers: 'e_luftbilder1989'
 		});
 
+
+
 		// 2b) Add backggroud map: DOPs
 		var luftbilder2024 = L.tileLayer.wms('https://gdi.berlin.de/services/wms/truedop_2024?', {
 			layers: 'truedop_2024'
 		}).addTo(map);
+		
+
+		//current_page = 1;			
+		//	fillGallery(current_page);
+		
 		
 
 		// 2c) Add backggroud map: OSM
@@ -111,8 +119,7 @@
 
 
 		
-
-		// 3) Fetch local GeoJSON (Response of Flickr API)
+		// 3) Fetch local GeoJSON (Response of Flickr API in flask / app.py)
 		//https://www.sitepoint.com/jquery-read-text-file/
 		jQuery.get('/static/data/flickr_api.geojson', function (data) {
 			flickr_data = data;
@@ -137,12 +144,23 @@
 
 		});
 		
+		function layerAdd(e) {
+			current_page = 1;			
+			fillGallery(current_page)
+		}
+		map.on('layeradd', layerAdd);
 			
+
+
 		// 4 Query GeoJSON after dragging the map
 		function onDrag(e) {
-			fillGallery(1)
+			current_page = 1;			
+			fillGallery(current_page)
 		}
 		map.on('moveend', onDrag);
+
+
+		
 
 		// 5) Query GeoJSON according to page numbers
 
