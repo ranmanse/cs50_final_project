@@ -78,18 +78,70 @@ function addPaginationButtons(page_start, page_end) {
     pagination.innerHTML = ''; // Clear existing buttons
     
     var d = document.createElement('div');
-    d.className += ("button_subgrid");
+    d.className += ('button_subgrid');
     pagination.appendChild(d);
         
-    // Add pagination
+    // 1) Add button to access previous page 
+    var button = document.createElement('button');
+    button.innerHTML = '<';
+    button.className += ('button_subgrid');
+    button.id += 'previous';
+    d.appendChild(button);
+
+        // Add event listener to 'previous' button
+        button.addEventListener('click', function() {
+            if (current_page > 1){
+                current_page = current_page -1 ;
+            } else {
+                current_page = 1;
+            }
+            console.log('page:' + current_page);
+            fillGallery(current_page);
+        }); 
+
+
+    // 2) Add pagination buttons
     for (page_start; page_start <= page_end; page_start++) {
         var button = document.createElement('button');
         button.innerHTML = page_start;
-        button.className += ("button_subgrid");
+        button.className += ('button_subgrid');
+        button.id += page_start;
         d.appendChild(button);
+
+        // Add event listener to each button
+        button.addEventListener('click', function() {
+            current_page = this.id; // From Co-Pilot
+            console.log('page:' + current_page);
+            fillGallery(current_page);
+          }); 
     }
 
+
+    // 3) Add button to access next page 
+    var button = document.createElement('button');
+    button.innerHTML = '>';
+    button.className += ('button_subgrid');
+    button.id += 'next';
+    d.appendChild(button);
+
+     // Add event listener to 'previous' button
+     button.addEventListener('click', function() {
+         if (current_page < page_end){
+             current_page = current_page +1 ;
+         } else {
+             current_page = page_end;
+         }
+         console.log('page:' + current_page);
+         fillGallery(current_page);
+     }); 
+    
+
+
 }
+
+
+
+
 
 
 function fillGallery(current_page){
