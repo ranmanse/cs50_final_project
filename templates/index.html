@@ -46,13 +46,13 @@
 	<div class="container">
 		<div class="header">
 			<h2>Flickr Mauer Photos</h2>
-			<h3>Move the map to load more photos</h3>
+			<h3>Move map to explore the Berlin Wall</h3>
 		</div>
 		<div class="body">
 			<div class = "map" id="map"></div>
 			<div class = "gallery" id = "gallery">
 				<div class="image-container" id="image-container"></div>
-				<div class="pagination" id = "pagination"></div>
+				<!--<div class="pagination" id = "pagination"></div>-->
 			</div>
 		</div>
 		<div class="footer">
@@ -63,7 +63,9 @@
 
 	
 	<script>
+		// Variables need to be globally available
 		var current_page;
+		var page_end;
 
 		// 1 Map initialization
 		var map = L.map('map').setView([52.52, 13.35], 11);
@@ -81,11 +83,7 @@
 		}).addTo(map);
 		
 
-		//current_page = 1;			
-		//	fillGallery(current_page);
 		
-		
-
 		// 2c) Add backggroud map: OSM
 		var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			maxZoom: 19,
@@ -147,17 +145,17 @@
 
 		});
 		
-		// 4a) Event listener 1: Load gallery when map is loades
-		function layerAdd(e) {
-			current_page = 1;			
-			fillGallery(current_page)
-		}
-		map.on('layeradd', layerAdd);
-			
-
-
+		// 4a) Event listener 1: Load gallery when map is loaded
+	
+		
 		// 4b) Event listener 2: Query GeoJSON after dragging the map
+		
 		function onDrag(e) {
+			// 1 Clear existing images/Container			
+			const imageContainer = document.getElementById('image-container');
+			imageContainer.innerHTML = ''; // Clear existing images
+			imageContainer.scrollTop;
+			
 			current_page = 1;			
 			fillGallery(current_page)
 		}
@@ -166,9 +164,24 @@
 
 		
 
-		// 5) Query GeoJSON according to page numbers
+		// 4c ) Event listener for infinite scroll:
+			//https://javascript.plainenglish.io/effortless-infinite-scrolling-a-guide-to-dynamic-image-loading-3ff6e7a4a608
+		const imageContainer = document.getElementById('image-container');
 
+		imageContainer.addEventListener('scroll', debounce(() => {
+  			// Formula from https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight
+			if (Math.abs(imageContainer.scrollHeight - imageContainer.clientHeight - imageContainer.scrollTop) <= 1 
+				&& current_page < page_end) {
+			
+				current_page ++
+				console.log('Loading page ' + current_page);
+				console.log('page_end ' + page_end);
 
+				fillGallery(current_page);
+			}
+		}, 200));
+	
+			
 	</script>
 
 </body>
