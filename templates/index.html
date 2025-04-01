@@ -94,8 +94,8 @@
 		
 		var baseMaps = {
 			"Luftbilder 1989": luftbilder1989,
-			"Openstreetmap": osm,
-			"Digitale farbige TrueOrthophotos 2024 (DOP20RGBI)": luftbilder2024
+			"Digitale farbige TrueOrthophotos 2024 (DOP20RGBI)": luftbilder2024,
+			"Openstreetmap": osm
 		};
 		var layerControl = L.control.layers(baseMaps).addTo(map);
 		
@@ -136,8 +136,8 @@
 
 			const imageContainer = document.getElementById('image-container');
 			imageContainer.innerHTML = ''; // Clear existing images
-			const pagination = document.getElementById('pagination');
-    		pagination.innerHTML = ''; // Clear existing buttons
+			//const pagination = document.getElementById('pagination');
+    		//pagination.innerHTML = ''; // Clear existing buttons
 			
 			showImage(feature);
 			
