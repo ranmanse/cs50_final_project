@@ -6,19 +6,23 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>Quick Start - Leaflet</title>
+	<title>Flickr Mauer Photos</title>
 
 	<!--<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" /> -->
 	<link rel="stylesheet" href="/static/style.css">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
-
+	<!-- Leaflet -->	
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
 		integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
 		integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 	<script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+
+	<!-- Leaflet Legend-->	 
+	<link rel="stylesheet" href="/static/leaflet.legend.css" />
+    <script type="text/javascript" src="/static/leaflet.legend.js"></script>
 
 	<!-- Marker Cluster -->
 	<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
@@ -72,35 +76,46 @@
 		// 1 Map initialization
 		var map = L.map('map').setView([52.52, 13.35], 11);
 		
-		// 2a) Add backggroud map: Luftbilder 1989
-		var luftbilder1989 = L.tileLayer.wms('https://gdi.berlin.de/services/wms/berlinermauer?', {
-			layers: 'e_luftbilder1989'
-		});
-
-
-
-		// 2b) Add backggroud map: DOPs
-		var luftbilder2024 = L.tileLayer.wms('https://gdi.berlin.de/services/wms/truedop_2024?', {
-			layers: 'truedop_2024'
-		}).addTo(map);
 		
-
-		
-		// 2c) Add backggroud map: OSM
+		// 2a) Add backggroud map: OSM
 		var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			maxZoom: 19,
+			transparent: true,
 			attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 		}).addTo(map);
+		
+		
+		// 2b) Add backggroud map: DOPs
+		var luftbilder2024 = L.tileLayer.wms('https://gdi.berlin.de/services/wms/truedop_2024?', {
+			layers: 'truedop_2024',
+			format: 'image/png',
+			transparent: true,
+			attribution: '© <a href="https://gdi.berlin.de/geonetwork/srv/ger/catalog.search#/metadata/aff8a8a5-2b48-44e8-949b-ea5f7d382a4f" target="_blank">Geoportal </a> Berlin / Datenquelle: Berlin.de –  Digitale farbige TrueOrthophotos 2024 (DOP20RGBI)  | <a href="https://www.govdata.de/dl-de/zero-2-0" target="_blank">DL-DE-Zero-2.0</a>'
+		}).addTo(map);
+		
+			
+		// 2c) Add backggroud map: Luftbilder 1989
+		var luftbilder1989 = L.tileLayer.wms('https://gdi.berlin.de/services/wms/berlinermauer?', {
+			layers: 'e_luftbilder1989',			
+			format: 'image/png',
+			transparent: true,
+			attribution: '© <a href="https://gdi.berlin.de/geonetwork/srv/ger/catalog.search#/metadata/8cd050c5-e3ff-369e-af46-a62f8a7f7140" target="_blank">Geoportal </a> Berlin / Datenquelle: Berlin.de – Verlauf der Berliner Mauer, 1989 | <a href="https://www.govdata.de/dl-de/zero-2-0" target="_blank">DL-DE-Zero-2.0</a>'
+		});
 
 
 		
 		var baseMaps = {
-			"Luftbilder 1989": luftbilder1989,
-			"Digitale farbige TrueOrthophotos 2024 (DOP20RGBI)": luftbilder2024,
-			"Openstreetmap": osm
+			"Openstreetmap": osm,
+			"Digitale farbige TrueOrthophotos 2024 (DOP20RGBI)": luftbilder2024,			
 		};
-		var layerControl = L.control.layers(baseMaps).addTo(map);
 		
+		var overlayMaps = {
+			"Luftbilder 1989": luftbilder1989
+		};
+		
+		L.control.layers(baseMaps, overlayMaps).addTo(map);
+		luftbilder1989.addTo(map);  // Add it on top	
+
 		{% block scripts %}
 
 		//2d) Fetch GeoJSON (WFS Verlauf Berliner Mauer)
@@ -196,8 +211,24 @@
 				fillGallery(current_page);
 			}
 		}, 200));
-
 		
+
+
+		// 5) Add legend
+
+		L.control.Legend({
+			position: "topright",
+			legends: [{
+				title: "Legend",
+				label: "Berlin Wall",
+				layers: [wall],
+				type: "polyline",
+				color: "#ff7800",
+				weight: 4,
+				opacity: 0.65
+			}]
+		}).addTo(map);
+			
 	</script>
 
 </body>
