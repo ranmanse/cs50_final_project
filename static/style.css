@@ -23,23 +23,22 @@ body {
 }
 
 
+.map_container {
+  display: grid;
+  grid-template-rows: 1fr 0.03fr ; /*Add 0.05fr for pagination*/
+  overflow: hidden;
+  column-gap: 10px;
+  border: 1px solid #ddd; 
+}
 
 .map {
   height: 100%;
   width: 100%;
   border: 1px solid #ddd; 
+  }
 
-  /*margin-bottom: 20px;*/
-  
-}
 
-.gallery {
-  display: grid;
-  grid-template-rows: 0.95fr 0.05fr; 
-  overflow: hidden;
-  column-gap: 10px;
-  border: 1px solid #ddd; 
-}
+
 
 .image-container {
   display: grid;
@@ -116,4 +115,6 @@ img {
 
 .footer {
   background-color: #C3BFAE;
+  text-align: center;
+
 }

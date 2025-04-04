@@ -46,17 +46,19 @@
 	<div class="container">
 		<div class="header">
 			<!--<h2>Flickr Mauer Photos</h2>-->
-			<h3>Move map to explore the Berlin Wall</h3>
+			<h2>Flickr Mauer Photos</h2>
 		</div>
 		<div class="body">
-			<div class = "map" id="map"></div>
-			<div class = "gallery" id = "gallery">
-				<div class="image-container" id="image-container"></div>
-				<!--<div class="pagination" id = "pagination"></div>-->
+			<div class="map_container">
+				<div class = "map" id="map"> </div>
+				<div class="manual" id = "manual"><p>Move map or click on marker to explore more photos</p></div>
 			</div>
+						
+			<div class="image-container" id="image-container"></div>
+				
 		</div>
 		<div class="footer">
-			<p>Dieses Produkt verwendet die Flickr API, ist jedoch nicht von SmugMug, Inc. bestätigt oder zertifiziert.</p>
+			<p>This product uses the Flickr API but is not endorsed or certified by SmugMug, Inc.</p>
 		</div>
 	</div>
 
@@ -108,15 +110,17 @@
 		
 		// Von Co-Pilot
 		// Get DOM elements
-
-		L.geoJSON(wall_geometry, {
+		
+		wall = L.geoJSON(wall_geometry, {
 			// You can add style options here if needed
 			style: {
 				color: "#ff7800",
 				weight: 4,
 				opacity: 0.65
 			}
-		}).addTo(map);
+		});
+		
+		
 
 
 		
@@ -129,6 +133,7 @@
 			const mcg = L.markerClusterGroup().addTo(map);
 			L.geoJSON(data).addTo(mcg);
 
+			// Event listener 1: Load photo when click on marker
 			// https://gis.stackexchange.com/questions/172508/add-an-event-listener-on-a-marker-in-leaflet
 			mcg.on("click", function (event) {
 			var clickedMarker = event.layer;
@@ -137,18 +142,29 @@
 			const imageContainer = document.getElementById('image-container');
 			imageContainer.innerHTML = ''; // Clear existing images
 			//const pagination = document.getElementById('pagination');
-    		//pagination.innerHTML = ''; // Clear existing buttons
+    			//pagination.innerHTML = ''; // Clear existing buttons
 			
 			showImage(feature);
-			
+						
 			});
+
+			// Event listener 2: Load gallery when map is loaded
+			function onAdd(e) {
+				current_page = 1;
+				console.log('Layeradd fired');
+				fillGallery(current_page)
+			
+			}
+			wall.on('add', onAdd);	
+
+			wall.addTo(map);
 
 		});
 		
-		// 4a) Event listener 1: Load gallery when map is loaded
-	
 		
-		// 4b) Event listener 2: Query GeoJSON after dragging the map
+		
+				
+		// 4a) Event listener 3: Query GeoJSON after dragging the map
 		
 		function onDrag(e) {
 			// 1 Clear existing images/Container			
@@ -164,7 +180,7 @@
 
 		
 
-		// 4c ) Event listener for infinite scroll:
+		// 4b) Event listener 4: for infinite scroll:
 			//https://javascript.plainenglish.io/effortless-infinite-scrolling-a-guide-to-dynamic-image-loading-3ff6e7a4a608
 		const imageContainer = document.getElementById('image-container');
 
@@ -180,8 +196,8 @@
 				fillGallery(current_page);
 			}
 		}, 200));
-	
-			
+
+		
 	</script>
 
 </body>
