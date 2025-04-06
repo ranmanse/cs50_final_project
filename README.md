@@ -4,6 +4,8 @@
 
 #### Description:
 
+#### GitHub: <https://github.com/ranmanse/cs50_final_project>
+
 Flickr-Mauer-Photos is a web-**map-application** that allows querying historic photos from the **Berlin Wall** on a map. These photos are hosted on flickr.com and are accessed by **flickr-API**. The map includes historic (1989) and recent areal images, the course of the Berlin Wal and a OpenStreetMap basemap.  
 
 **Users can easily query the photos by moving the map. Flickr-Mauer-Photos then responds all pictures inside the current map extend**.  
@@ -38,6 +40,10 @@ There are more event listeners which realize:
  
 
 
+In order to implent the application your own you need to set your own Flickr API Key as environment variable. 
+E.g. in a Linux-terminal:
 
-
+`venv/bin/activate:
+export FLICKR_API_KEY="XXXXXXXXXXXXXXXXXXXXXXXXXXX"
+`
 
