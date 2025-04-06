@@ -37,7 +37,11 @@ body {
   border: 1px solid #ddd; 
   }
 
-
+  .map {
+    height: 100%;
+    width: 100%;
+    border: 1px solid #ddd; 
+    }
 
 
 .image-container {
@@ -117,4 +121,13 @@ img {
   background-color: #C3BFAE;
   text-align: center;
 
+}
+
+
+.manual {
+  color: #000000;
+  text-decoration: none;
+  font-size: 0.75em;
+  
+  overflow-wrap: break-word;
 }

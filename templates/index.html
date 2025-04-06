@@ -4,7 +4,9 @@
 <head>
 	<base target="_top">
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
 
 	<title>Flickr Mauer Photos</title>
 
@@ -19,6 +21,7 @@
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
 		integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 	<script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+
 
 	<!-- Leaflet Legend-->	 
 	<link rel="stylesheet" href="/static/leaflet.legend.css" />
@@ -81,7 +84,8 @@
 		var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			maxZoom: 19,
 			transparent: true,
-			attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+			//attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+			collapsed: true
 		}).addTo(map);
 		
 		
@@ -90,7 +94,7 @@
 			layers: 'truedop_2024',
 			format: 'image/png',
 			transparent: true,
-			attribution: '© <a href="https://gdi.berlin.de/geonetwork/srv/ger/catalog.search#/metadata/aff8a8a5-2b48-44e8-949b-ea5f7d382a4f" target="_blank">Geoportal </a> Berlin / Datenquelle: Berlin.de –  Digitale farbige TrueOrthophotos 2024 (DOP20RGBI)  | <a href="https://www.govdata.de/dl-de/zero-2-0" target="_blank">DL-DE-Zero-2.0</a>'
+			//attribution: '© <a href="https://gdi.berlin.de/geonetwork/srv/ger/catalog.search#/metadata/aff8a8a5-2b48-44e8-949b-ea5f7d382a4f" target="_blank">Geoportal </a> Digitale farbige TrueOrthophotos 2024 (DOP20RGBI)  | <a href="https://www.govdata.de/dl-de/zero-2-0" target="_blank">DL-DE-Zero-2.0</a>'
 		}).addTo(map);
 		
 			
@@ -99,7 +103,7 @@
 			layers: 'e_luftbilder1989',			
 			format: 'image/png',
 			transparent: true,
-			attribution: '© <a href="https://gdi.berlin.de/geonetwork/srv/ger/catalog.search#/metadata/8cd050c5-e3ff-369e-af46-a62f8a7f7140" target="_blank">Geoportal </a> Berlin / Datenquelle: Berlin.de – Verlauf der Berliner Mauer, 1989 | <a href="https://www.govdata.de/dl-de/zero-2-0" target="_blank">DL-DE-Zero-2.0</a>'
+			//attribution: '© <a href="https://gdi.berlin.de/geonetwork/srv/ger/catalog.search#/metadata/8cd050c5-e3ff-369e-af46-a62f8a7f7140" target="_blank">Geoportal </a> Verlauf der Berliner Mauer, 1989 | <a href="https://www.govdata.de/dl-de/zero-2-0" target="_blank">DL-DE-Zero-2.0</a>'
 		});
 
 
@@ -218,6 +222,7 @@
 
 		L.control.Legend({
 			position: "topright",
+			collapsed: true,
 			legends: [{
 				title: "Legend",
 				label: "Berlin Wall",
@@ -225,10 +230,28 @@
 				type: "polyline",
 				color: "#ff7800",
 				weight: 4,
-				opacity: 0.65
+				opacity: 0.65,
+				
 			}]
 		}).addTo(map);
 			
+
+		//  6a) Add custom attribution control (Co-Pilot)
+		var attributionControl = L.control.attribution({
+			position: 'bottomleft',
+			prefix: false,
+			collapsed: true  // This makes it collapsible on mobile
+		}).addTo(map);
+
+		// Add your attributions
+		attributionControl.addAttribution('&copy; <a href="http://www.openstreetmap.org/copyright">OSM</a>');
+		attributionControl.addAttribution('© <a href="https://gdi.berlin.de">Geoportal Berlin</a> | <a href="https://www.govdata.de/dl-de/zero-2-0" target="_blank">DL-DE-Zero-2.0');
+				
+
+
+
+
+
 	</script>
 
 </body>
