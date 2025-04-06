@@ -43,7 +43,7 @@ There are more event listeners which realize:
 In order to implent the application your own you need to set your own Flickr API Key as environment variable. 
 E.g. in a Linux-terminal:
 
-`venv/bin/activate:`
-`export FLICKR_API_KEY="XXXXXXXXXXXXXXXXXXXXXXXXXXX"`
+    `venv/bin/activate:`
+    `export FLICKR_API_KEY="XXXXXXXXXXXXXXXXXXXXXXXXXXX"`
 
 
