@@ -45,7 +45,7 @@ def index():
                         
      ## 2) Request data from Flickr API
                
-        # a) Create grid for API request (made in QGIS)
+        # a) Load grid for API request (made in QGIS)
         grid = gpd.read_file('static/data/grid_1000.geojson')
         bounding_boxes = grid.geometry.bounds   
 
@@ -137,7 +137,7 @@ def index():
                 with open('static/data/flickr_api.geojson', 'w') as f:
                     #json.dump(photos, f)
                     geojson.dump(gdf, f)
-                    
+
         
         return render_template('index.html', wall_geometry = data_json)
     
