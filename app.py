@@ -53,13 +53,7 @@ def index():
         photos = []
 
        
-        # c) Create function to make API request
-        def api_request_per_page(params):
-            response = requests.get(url, 
-                    params = params
-                    ).json()
-               
-            return 
+        
         
 
         # d) Check if last API-Request is older than 1 week
@@ -71,6 +65,8 @@ def index():
 
         if diff > limit:
             print('last request older than 1 week')
+            
+            
 
             # d) Loop through bounding boxes and make API request
             for box in bounding_boxes.values.tolist():
@@ -85,30 +81,36 @@ def index():
             # e) Params for Flickr API request
                 url = "https://api.flickr.com/services/rest/" 
                 flickr_api_key = os.environ.get('FLICKR_API_KEY')
-                        
-                params = {
-                                "method": "flickr.photos.search",
-                                "api_key": flickr_api_key,
-                                #"lon": 13.45928192138672,
-                                #"lat": 52.485498223625996,
-                                #"bbox": "13.077850,52.374342,13.564682,52.685956",
-                                #"bbox": "13.412504,52.468456,13.499966,52.509274",
-                                "bbox": bbox,
-                                #"license": "1,2,3,4,5,6,7,8,9,10",
-                                #"radius": 1,
-                                #"accuracy": 11,
-                                "max_taken_date": "1960-01-01",
-                                "max_taken_date": "1990-12-31",
-                                "tag": "berlin wall, berliner mauer, wall, mauer, Sektorengrenze, Die Mauer, The Wall, Deutsche Teilung, Checkpoint, Antifaschistischer Schutzwall",
-                                "page": page,
-                                "per_page" : 500,
-                                "format": "json",
-                                "nojsoncallback": 1,
-                                "extras": "geo, licence, date_taken, owner_name, url_o, tags"
-                            }
 
 
+
+                # c) Create function to make API request
+                def api_request_per_page(page, bbox):
+                    response = requests.get(url, 
+                            params = {
+                                        "method": "flickr.photos.search",
+                                        "api_key": flickr_api_key,
+                                        #"lon": 13.45928192138672,
+                                        #"lat": 52.485498223625996,
+                                        #"bbox": "13.077850,52.374342,13.564682,52.685956",
+                                        #"bbox": "13.412504,52.468456,13.499966,52.509274",
+                                        "bbox": bbox,
+                                        #"license": "1,2,3,4,5,6,7,8,9,10",
+                                        #"radius": 1,
+                                        #"accuracy": 11,
+                                        "max_taken_date": "1960-01-01",
+                                        "max_taken_date": "1990-12-31",
+                                        "tag": "berlin wall, berliner mauer, wall, mauer, Sektorengrenze, Die Mauer, The Wall, Deutsche Teilung, Checkpoint, Antifaschistischer Schutzwall",
+                                        "page": page,
+                                        "per_page" : 500,
+                                        "format": "json",
+                                        "nojsoncallback": 1,
+                                        "extras": "geo, licence, date_taken, owner_name, url_o, tags"
+                                    }
+                            ).json()
+                    return response
                 
+                print('api_request_per_page', api_request_per_page(1,bbox))                                
                 # Acces response as dictionary - From Co-Pilot: https://www.copilotsearch.com/posts/how-to-use-the-flickr-api 
                 photos += api_request_per_page(1,bbox)['photos']['photo']   
                 print(photos)
