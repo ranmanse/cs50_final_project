@@ -16,33 +16,42 @@ app = Flask(__name__)
 @app.route("/", methods=["GET"])
 def index():
     if request.method == "GET":
+
         
     ## 1) Request data from WFS
         
-        # https://datengraben.com/til/wfs-to-geo-dataframes/
-        # URL for WFS backend
-        ## WFS fromChatGP
-        url = 'https://gdi.berlin.de/services/wfs/berlinermauer?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAME=berlinermauer:a_grenzmauer&OUTPUTFORMAT=application/json'
-        wfs = WebFeatureService(url=url, version="2.0.0") 
+        url = "https://gdi.berlin.de/services/wfs/berlinermauer"
 
-        # Fetch the last available layer
-        layer_name = list(wfs.contents)[-1]
-        
-        # Specify the parameters for fetching the data
-        # Count: specificies amount of rows to return (e.g. 10000 or 100)
-        # startIndex: specifies at which offset to start returning rows
-        params = dict(service='WFS', version="2.0.0", request='GetFeature',
-        typeNames=layer_name)
+        params = {
+            "SERVICE": "WFS",
+            "VERSION": "2.0.0",
+            "REQUEST": "GetFeature",
+            "TYPENAMES": "berlinermauer:a_grenzmauer",
+            "OUTPUTFORMAT": "application/json"
+        }
 
-        # Parse the URL with parameters
-        wfs_request_url = Request('GET', url, params=params).prepare().url
+        try:
+            response = requests.get(
+                url,
+                params=params,
+                timeout=30
+            )
 
-        # Read data from URL
-        data = gpd.read_file(wfs_request_url).set_crs(epsg=25833, inplace=False, allow_override=True)
 
-        data_json = data.to_json(to_wgs84=True)
-        
-                        
+            print("Status:", response.status_code)
+            print("Content-Type:", response.headers.get("Content-Type"))
+            print("URL:", response.url)
+            print("Antwort:", response.text[:500])
+
+            response.raise_for_status()
+
+            data_json = json.dumps(response.json())
+
+        except Exception as e:
+            app.logger.warning("WFS konnte nicht geladen werden: %s", e)
+            data_json = '{"type": "FeatureCollection", "features": []}'
+
+                       
      ## 2) Request data from Flickr API
                
         # a) Load grid for API request (made in QGIS)
@@ -59,14 +68,17 @@ def index():
         # d) Check if last API-Request is older than 1 week
 
         now = datetime.now()
-        last_request = datetime.fromtimestamp(os.path.getmtime('static/data/flickr_api.geojson'))
-        diff = now - last_request
+        flickr_geojson_path = 'static/data/flickr_api.geojson'
         limit = timedelta(days=7)
+
+        if os.path.exists(flickr_geojson_path):
+            last_request = datetime.fromtimestamp(os.path.getmtime(flickr_geojson_path))
+            diff = now - last_request
+        else:
+            diff = limit + timedelta(seconds=1)
 
         if diff > limit:
             print('last request older than 1 week')
-            
-            
 
             # d) Loop through bounding boxes and make API request
             for box in bounding_boxes.values.tolist():
@@ -140,7 +152,7 @@ def index():
                     #json.dump(photos, f)
                     geojson.dump(gdf, f)
 
-        
+            
         return render_template('index.html', wall_geometry = data_json)
     
 
