@@ -5,6 +5,8 @@
 #################################################
 */
 
+var gallery_generation = 0;
+
 function fillGallery(current_page){
    
     // 1 Get Bounding Box
@@ -98,16 +100,11 @@ function calculatePages(photosWithin, current_page) {
 */
 
 function showImage(feature) {
-    // Update image append code (Co-Pilot)
     const imageContainer = document.getElementById('image-container');
-        
-    // 1) Create div element / subgrid per image
+    const imageGeneration = gallery_generation;
     var d = document.createElement('div');
     d.className += ("image_subgrid");
-    imageContainer.appendChild(d);
 
-
-    // 2) Append title to subgrid
     //https://stackoverflow.com/questions/4772774/how-do-i-create-a-link-using-javascript
     var a = document.createElement('a');
     a.className += ("link_text");
@@ -122,11 +119,21 @@ function showImage(feature) {
 
     d.appendChild(a);
     
-    // 3) Append image to subgrid	
     const myImage = new Image();
     myImage.src = `https://live.staticflickr.com/${feature.properties.server}/${feature.properties.id}_${feature.properties.secret}_c.jpg`;
     myImage.className += ("image");
     d.appendChild(myImage);
+
+    // Wait for the image dimensions so the grid can size the card naturally.
+    const placeCard = () => {
+        if (imageGeneration !== gallery_generation) {
+            return;
+        }
+        imageContainer.appendChild(d);
+    };
+
+    myImage.addEventListener('load', placeCard, { once: true });
+    myImage.addEventListener('error', placeCard, { once: true });
 }
 
 

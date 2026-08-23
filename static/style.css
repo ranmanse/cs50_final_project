@@ -1,133 +1,76 @@
-body {
-  overflow: hidden;
+:root {
+  --ink: #172322;
+  --muted: #667572;
+  --paper: #f4f1e9;
+  --panel: #fbfaf6;
+  --line: #d8ddd5;
+  --teal: #0e6965;
+  --coral: #e56f52;
+  --shadow: 0 18px 45px rgba(33, 52, 47, 0.09);
 }
 
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  overflow: hidden;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: Georgia, 'Times New Roman', serif;
+}
 
 .container {
   height: 100vh;
   width: 100vw;
   display: grid;
-  grid-template-columns: 0.99fr;
-  grid-template-rows: 0.01fr 1fr 0.01fr;
-  }
-
-
-.body {
-  display: grid;
-  grid-template-columns: 0.4fr 0.6fr;
-  overflow: hidden;
-  column-gap: 10px;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  background-image: linear-gradient(115deg, rgba(255,255,255,.38), transparent 44%);
 }
 
+.header, .footer, .body { width: min(1480px, 100%); margin: 0 auto; }
+.header { display: flex; align-items: center; justify-content: space-between; padding: 24px 34px 18px; }
+.brand-lockup { display: flex; align-items: center; gap: 14px; }
+.brand-mark { display: grid; place-items: center; width: 39px; height: 39px; color: var(--panel); background: var(--teal); font-size: 1.25rem; font-style: italic; }
+.eyebrow { margin: 0 0 5px; color: var(--teal); font: 600 .68rem/1.1 Arial, sans-serif; letter-spacing: .16em; text-transform: uppercase; }
+h1, h2, p { margin-top: 0; }
+h1 { margin-bottom: 0; font-size: clamp(1.65rem, 2.8vw, 2.35rem); font-weight: 400; letter-spacing: .01em; }
+h1 em { color: var(--coral); font-weight: 400; }
+.header-meta, .gallery-note { color: var(--muted); font: 600 .68rem/1.2 Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.header-meta { display: flex; align-items: center; gap: 8px; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--coral); }
 
-.map_container {
-  display: grid;
-  grid-template-rows: 1fr 0.03fr ; /*Add 0.05fr for pagination*/
-  overflow: hidden;
-  column-gap: 10px;
-  border: 1px solid #ddd; 
+.body { min-height: 0; display: grid; grid-template-columns: minmax(300px, .82fr) minmax(0, 1.18fr); gap: 18px; padding: 0 34px 18px; overflow: hidden; }
+.map-panel, .gallery-panel { min-height: 0; display: flex; flex-direction: column; padding: 20px; background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.panel-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; padding-bottom: 15px; }
+.panel-heading h2 { margin: 0; font-size: clamp(1.25rem, 2vw, 1.8rem); font-weight: 400; }
+.map_container { min-height: 0; flex: 1; display: grid; grid-template-rows: minmax(0, 1fr) auto; overflow: hidden; border: 1px solid var(--line); }
+.map { min-height: 0; width: 100%; border: 0; }
+.manual { padding: 11px 14px; color: var(--muted); background: #eef1eb; font: .74rem/1.35 Arial, sans-serif; }
+.manual p { margin: 0; }
+.image-container { min-height: 0; flex: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); align-content: start; align-items: start; gap: 14px; overflow-y: auto; padding-right: 3px; scrollbar-color: var(--teal) transparent; }
+.image_subgrid { display: flex; flex-direction: column; min-width: 0; border: 1px solid var(--line); background: #fff; transition: transform .2s ease, box-shadow .2s ease; }
+.image_subgrid:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(33, 52, 47, .12); }
+.image_subgrid .image { order: -1; display: block; width: 100%; height: auto; background: #dce4df; }
+.link_text { display: block; min-height: 52px; padding: 10px 11px; color: var(--ink); text-decoration: none; font: .74rem/1.35 Arial, sans-serif; overflow-wrap: anywhere; }
+.link_text:hover { color: var(--teal); }
+img { max-width: 100%; }
+.leaflet-tile { border: none !important; max-height: none !important; }
+.leaflet-control-layers, .leaflet-control-legend { border: 1px solid var(--line) !important; border-radius: 0 !important; box-shadow: 0 4px 12px rgba(23,35,34,.12) !important; }
+.footer { display: flex; justify-content: space-between; gap: 20px; padding: 12px 34px 16px; color: var(--muted); border-top: 1px solid var(--line); font: .67rem/1.3 Arial, sans-serif; }
+.footer p { margin: 0; }
+.footer-mark { color: var(--teal); letter-spacing: .12em; }
+
+@media (max-width: 760px) {
+  body { overflow: auto; }
+  .container { height: auto; min-height: 100vh; }
+  .header { padding: 20px 18px 16px; }
+  .header-meta { display: none; }
+  .body { grid-template-columns: 1fr; grid-template-rows: minmax(430px, 52vh) minmax(480px, 1fr); padding: 0 18px 16px; overflow: visible; }
+  .map-panel, .gallery-panel { padding: 14px; }
+  .footer { padding: 12px 18px 18px; flex-direction: column; gap: 5px; }
+  .image-container { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-.map {
-  height: 100%;
-  width: 100%;
-  border: 1px solid #ddd; 
-  }
-
-  .map {
-    height: 100%;
-    width: 100%;
-    border: 1px solid #ddd; 
-    }
-
-
-.image-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(185px, 0.49fr));
-  column-gap: 10px;
-  overflow-y: scroll;
- 
- 
-}
-
-.pagination {
-  display: grid;
-  /*justify-content: center;*/
-  /*align-items: center;*/
-  row-gap: 10px;
-  column-gap: 10px;
-  
-}
-
-img {
-  object-fit: cover;
-  width: 100%;
-  max-height:100%;
-  /*margin: 0 15px 0 0; */
-  /*border: 1px solid #ddd; */
-}
-
-/* Specific styling for map tiles */
-/* Copilot */
-.leaflet-tile {
-  border: none !important;
-  max-height: none !important;
-}
-
-
-/* https://coder-coder.com/display-divs-side-by-side/ */
-/*
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 20px;
-}
-*/
-
-
-.image_subgrid {
-  display: subgrid;
-  grid-row: span 2;
-  border: 1px solid #ddd;
-  margin-bottom: 0.5em;
-  }
-
-  .button_subgrid {
-    display: subgrid; 
-    grid-template-columns: repeat(auto-fit, minmax(0.3, 0.4fr));
-    place-self: center;
-    
-    }
-
-   
-
-.link_text {
-  color: #000000;
-  text-decoration: none;
-  font-size: 0.75em;
-  /*vertical-align: middle;*/
-  overflow-wrap: break-word;
-}
-
-.header {
-  background-color: #F9F3D5;
-  text-align: center;
-}
-
-.footer {
-  background-color: #C3BFAE;
-  text-align: center;
-
-}
-
-
-.manual {
-  color: #000000;
-  text-decoration: none;
-  font-size: 0.75em;
-  
-  overflow-wrap: break-word;
+@media (max-width: 390px) {
+  .image-container { grid-template-columns: 1fr; }
 }

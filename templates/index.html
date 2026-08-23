@@ -8,7 +8,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
 
-	<title>flickr Mauer Photos</title>
+	<title>Mauer Archive | Flickr photographs of the Berlin Wall</title>
 
 	<!--<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" /> -->
 	<link rel="stylesheet" href="/static/style.css">
@@ -51,22 +51,49 @@
 	</div> -->
 
 	<div class="container">
-		<div class="header">
-			<!--<h2>Flickr Mauer Photos</h2>-->
-			<h2>flickr Mauer Photos</h2>
-		</div>
-		<div class="body">
-			<div class="map_container">
-				<div class = "map" id="map"> </div>
-				<div class="manual" id = "manual"><p>Move map or click on marker to explore more photos</p></div>
+		<header class="header">
+			<div class="brand-lockup">
+				<span class="brand-mark" aria-hidden="true">M</span>
+				<div>
+					<p class="eyebrow">A visual field guide</p>
+					<h1>Mauer <em>Archive</em></h1>
+				</div>
 			</div>
-						
-			<div class="image-container" id="image-container"></div>
-				
-		</div>
-		<div class="footer">
+			<div class="header-meta">
+				<span class="status-dot" aria-hidden="true"></span>
+				<span>Berlin · 1961—1990</span>
+			</div>
+		</header>
+
+		<main class="body">
+			<section class="map-panel" aria-labelledby="map-heading">
+				<div class="panel-heading">
+					<div>
+						<h2 id="map-heading">Explore the trace</h2>
+					</div>
+				</div>
+				<div class="map_container">
+					<div class="map" id="map"></div>
+					<div class="manual" id="manual"><p>Move the map or select a marker to reveal photographs from this place.</p></div>
+				</div>
+			</section>
+
+			<section class="gallery-panel" aria-labelledby="gallery-heading">
+				<div class="panel-heading gallery-heading">
+					<div>
+						<p class="eyebrow">From the Flickr collection</p>
+						<h2 id="gallery-heading">Photographs in view</h2>
+					</div>
+					<span class="gallery-note">Scroll to continue</span>
+				</div>
+				<div class="image-container" id="image-container"></div>
+			</section>
+		</main>
+
+		<footer class="footer">
 			<p>This product uses the Flickr API but is not endorsed or certified by SmugMug, Inc.</p>
-		</div>
+			<p class="footer-mark">MAUER / FIELD NOTES</p>
+		</footer>
 	</div>
 
 
@@ -160,6 +187,7 @@
 
 			const imageContainer = document.getElementById('image-container');
 			imageContainer.innerHTML = ''; // Clear existing images
+			gallery_generation++;
 			//const pagination = document.getElementById('pagination');
     			//pagination.innerHTML = ''; // Clear existing buttons
 			
@@ -189,6 +217,7 @@
 			// 1 Clear existing images/Container			
 			const imageContainer = document.getElementById('image-container');
 			imageContainer.innerHTML = ''; // Clear existing images
+			gallery_generation++;
 			imageContainer.scrollTop;
 			
 			current_page = 1;			
