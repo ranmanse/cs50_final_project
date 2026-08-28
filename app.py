@@ -13,6 +13,9 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "static", "data")
+
 @app.route("/", methods=["GET"])
 def index():
     if request.method == "GET":
@@ -56,7 +59,8 @@ def index():
      ## 2) Request data from Flickr API
                
         # a) Load grid for API request (made in QGIS)
-        grid = gpd.read_file('static/data/grid_1000.geojson')
+        grid_path = os.path.join(DATA_DIR, "grid_1000.geojson")
+        grid = gpd.read_file(grid_path)
         bounding_boxes = grid.geometry.bounds   
 
         # b) Create empty list to savi API request into
@@ -69,7 +73,7 @@ def index():
         # d) Check if last API-Request is older than 1 week
 
         now = datetime.now()
-        flickr_geojson_path = 'static/data/flickr_api.geojson'
+        flickr_geojson_path = os.path.join(DATA_DIR, "flickr_api.geojson")
         limit = timedelta(days=7)
 
         if os.path.exists(flickr_geojson_path):
@@ -149,7 +153,7 @@ def index():
                 print(gdf.size)
 
             # h) Save geodataframe as geojson   
-                with open('static/data/flickr_api.geojson', 'w') as f:
+                with open(flickr_geojson_path, 'w') as f:
                     #json.dump(photos, f)
                     geojson.dump(gdf, f)
         
